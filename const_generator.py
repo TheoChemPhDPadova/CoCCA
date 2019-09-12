@@ -27,7 +27,7 @@ XMOL = coor.XYZ(FILENAME)
 print("\nNumber of atoms:\t\t", XMOL.natoms, sep="")
 print("Elements in molecule:\t\t", ", ".join(set(XMOL.element)), sep="")
 
-INPUT_INDEX = input("\nEnter the element to constraint.\nMultiple elements constrains are possible (e.g.: C O) or special (All)\nSelection\n").split()
+INPUT_INDEX = input("\nEnter the element(s) to constrain.\nMultiple elements constraints are possible (e.g.: C O).\nDifferent elements must be separated by a SPACE.\nSpecial tokens are allowed (e.g.: All)\n\nSelection\n").split()
 CONST_INDEX = []
 
 for idx, val in enumerate(XMOL.element):

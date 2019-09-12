@@ -13,8 +13,8 @@ class XYZ:
                 line = line.split()
                 self.element.append(line[0])
                 self.xyz.append([float(line[1]), float(line[2]), float(line[3])])
-        except:
-            print('Error during importing molecule!!! Check XMol format!!! Test')
+        except FileNotFoundError as detail:
+            print("\n{}".format(detail))
             quit()
 
     def write_xmol(self, molecule, path):
