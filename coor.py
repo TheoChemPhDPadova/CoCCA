@@ -4,6 +4,7 @@ class XYZ:
     """Loading XMol cartesian coordinate"""
     def __init__(self, path):
         try:
+            print("XYZ Loading...\t\t\t", end="", flush=True)
             with open(path) as file:
                 lines = file.readlines()
             self.natoms = int(lines[0])
@@ -13,6 +14,9 @@ class XYZ:
                 line = line.split()
                 self.element.append(line[0])
                 self.xyz.append([float(line[1]), float(line[2]), float(line[3])])
+            print("Done!")
+            print("Atoms...\t\t\t{}".format(str(self.natoms)))
+            print("Elements in molecule:\t\t{}".format(", ".join(set(self.element))))
         except FileNotFoundError as detail:
             print("\n{}".format(detail))
             quit()
@@ -37,6 +41,7 @@ class PDB:
     """
     def __init__(self, path):
         try:
+            print("PDB Loading...\t\t\t", end="", flush=True)
             with open(path) as file:
                 lines = file.readlines()
             self.natoms = 0
@@ -76,7 +81,7 @@ class PDB:
                         else:
                             self.prot[chain][rsn].append(atom)
                     self.natoms += 1
-            print("PDB succesfully loaded!\n")
+            print("Done!")
             print("Atoms...\t\t\t{}".format(str(self.natoms)))
             print("Chains...\t\t\t{} ({})".format(len(self.prot), "/".join([*self.prot])))
         except FileNotFoundError as detail:
