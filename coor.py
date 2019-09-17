@@ -28,4 +28,3 @@ class XYZ:
                 molecule.xyz[idx][1],
                 molecule.xyz[idx][2]
                 ))
-"""ASDASD"""
