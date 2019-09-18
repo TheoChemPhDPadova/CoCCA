@@ -1,7 +1,7 @@
 <img src="img/CoCCA.png" align="right" />
 
 # CoCCA
-**Computational Chemistry Calculations Assistant**
+**Co**mputational **C**hemistry **C**alculations **A**ssistant
 
 ## Table of contents
   - [Setup](#setup)
