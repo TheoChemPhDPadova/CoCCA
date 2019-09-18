@@ -95,4 +95,56 @@ class MOL(coor.XYZ):
         if order == "number":
             comp.sort(key=lambda x: x[1], reverse=True) 
         return comp
+    
+    def load_hess_file(self, path, verbose=False):
+        """
+        The function loads into the MOL class object the data conteined into the .hess file
+        specified in path. For a verbose output about errors use the flag "verbose=True"
+        """
+        def load_orca_hesstype_mat(datalist, header_position):
+            matrix = []
+            dim = [int(i) for i in datalist[header_position + 1].split()]
+            spare_lines = dim[0]%5
+            complete_blocks = int((dim[0] - spare_lines)/5)
+            for row in range(0, dim[0]):
+                matrix_row = []
+                for block in range(0, complete_blocks):
+                    line_index = header_position + 3 + block*(dim[0]+1) + row
+                    splitted_line = datalist[line_index].split()
+                    for col in range(0, 5):
+                        matrix_row.append(float(splitted_line[col+1]))
+                if spare_lines != 0:
+                    line_index = header_position + 3 + complete_blocks*(dim[0]+1) + row
+                    splitted_line = datalist[line_index].split()
+                    for col in range(0, spare_lines):
+                        matrix_row.append(float(splitted_line[col+1]))
+                matrix.append(matrix_row)
+            return matrix
+
+        try:
+            with open(path) as file:
+                lines = file.readlines()
+                lines = [line.strip('\n') for line in lines]
+            try:
+                hessian_index = lines.index("$hessian")
+                self.hessian_matrix = load_orca_hesstype_mat(lines, hessian_index)
+            except ValueError:
+                if verbose == True: print("WARNING: no hessian matrix found")
+            try:
+                norm_modes_index = lines.index("$normal_modes")
+                self.normal_modes_matrix = load_orca_hesstype_mat(lines, norm_modes_index)
+            except ValueError:
+                if verbose == True: print("WARNING: no normal modes matrix found")
+            try:
+                frequencies_index = lines.index("$vibrational_frequencies")
+                self.vibr_frequencies = []
+                dim = int(lines[frequencies_index + 1])
+                for index in range(0, dim):
+                    row = lines[frequencies_index + 2 + index].split()
+                    self.vibr_frequencies.append(float(row[1]))
+            except ValueError:
+                if verbose == True: print("WARNING: no vibrational frequencies list found")
+        except FileNotFoundError as detail:
+            print("\n{}".format(detail))
+            quit()
 
