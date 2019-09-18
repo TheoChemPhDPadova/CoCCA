@@ -82,7 +82,7 @@ q) Exit
     """)
     choice = input("\nSelection:\t")
     if choice == "1":
-        os.system("python3 " + sys.path[0] + "./const_generator.py")
+        os.system("python3 " + sys.path[0] + "/const_generator.py")
     elif choice == "b":
         main()
     elif choice == "q":
