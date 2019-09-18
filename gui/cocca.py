@@ -2,7 +2,7 @@ from PyQt5 import QtGui
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5 import QtCore
-import sys, time, random, json, coor, inpgen
+import sys, time, random, json, coor, inpgen, neigh_find_gui
 #import const_gen_ui as CGU
 
 
@@ -76,7 +76,10 @@ class Window(QWidget):
         self.enter.clicked.connect(self.enter_cocca)
 
     def enter_cocca(self):
-        self.dialog = data.Second()
+        if self.anal.isChecked():
+            self.dialog = neigh_find_gui.Third()
+        else:
+            self.dialog = inpgen.Second()
         print("Ciao")
         self.dialog.resize(self.size2)
         self.dialog.show()
