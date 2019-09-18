@@ -21,7 +21,7 @@ def main():
     header()
     print("""
 1) Data Manipulation
-2) Analysis
+2) Structure Analysis
 3) Input Generation
 
 q) Exit
@@ -31,9 +31,9 @@ q) Exit
     if choice == "1":
         data_manipulation()
     elif choice == "2":
-        pass
+        analysis()
     elif choice == "3":
-        pass
+        input_generation()
     elif choice == "q":
         quit()
 
@@ -49,6 +49,40 @@ q) Exit
     choice = input("\nSelection:\t")
     if choice == "1":
         pass
+    elif choice == "b":
+        main()
+    elif choice == "q":
+        quit()
+
+def analysis():
+    """Structure Analysis menu"""
+    header()
+    print("""
+1) Neighbor Finder (PDB)
+
+b) Back to Main Menu
+q) Exit
+    """)
+    choice = input("\nSelection:\t")
+    if choice == "1":
+        os.system("python3 ./neigh_finder.py")
+    elif choice == "b":
+        main()
+    elif choice == "q":
+        quit()
+
+def input_generation():
+    """Input Generation menu"""
+    header()
+    print("""
+1) Constraints Generator (XYZ)
+
+b) Back to Main Menu
+q) Exit
+    """)
+    choice = input("\nSelection:\t")
+    if choice == "1":
+        os.system("python3 ./const_generator.py")
     elif choice == "b":
         main()
     elif choice == "q":
