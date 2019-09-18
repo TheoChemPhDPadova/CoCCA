@@ -1,5 +1,5 @@
 """Menu Interface"""
-import os
+import os, sys
 
 def header():
     """Logo"""
@@ -65,7 +65,7 @@ q) Exit
     """)
     choice = input("\nSelection:\t")
     if choice == "1":
-        os.system("python3 ./neigh_finder.py")
+        os.system("python3 " + sys.path[0] + "/neigh_finder.py")
     elif choice == "b":
         main()
     elif choice == "q":
@@ -82,7 +82,7 @@ q) Exit
     """)
     choice = input("\nSelection:\t")
     if choice == "1":
-        os.system("python3 ./const_generator.py")
+        os.system("python3 " + sys.path[0] + "./const_generator.py")
     elif choice == "b":
         main()
     elif choice == "q":
