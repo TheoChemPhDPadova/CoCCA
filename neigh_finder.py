@@ -1,53 +1,51 @@
-import numpy as np
-import sys, coor
+"""Neighbor finder module"""
+import sys
+import coor
+import utilities as ut
 
-def dist(vec1,vec2):
-    return float(np.sqrt((vec1[0]-vec2[0])**2+(vec1[1]-vec2[1])**2+(vec1[2]-vec2[2])**2))
-
-print('''
+print("""
     ================================
-           Neighbor Finder 
+            Neighbor Finder
     ================================
-''')
+""")
 
 PRT = coor.PDB(sys.argv[1]).prot
+SEL_CHAIN = input("Select chain...\t\t\t")
+SEL_RSN = input("Select residue...\t\t")
+print("\nDetected Atom Type in", SEL_RSN, PRT[SEL_CHAIN][SEL_RSN][0][2], ":\n")
+for i in PRT[SEL_CHAIN][SEL_RSN]:
+    print(">> ", i[1])
 
-SelCHAIN = input('Select chain...\t\t\t')
-SelRSN = input('Select residue...\t\t')
-print('\nDetected Atom Type in', SelRSN, PRT[SelCHAIN][SelRSN][0][2], ':\n')
-for i in PRT[SelCHAIN][SelRSN]:
-    print('>> ',i[1])
+SEL_AT = input("\nSelect Atom Type:\t")
 
-SelAT = input('\nSelect Atom Type:\t')
+TGT = [i for i in PRT[SEL_CHAIN][SEL_RSN] if i[1] == SEL_AT][0]
 
-TGT=[i for i in PRT[SelCHAIN][SelRSN] if i[1]==SelAT][0]
+DIST_TGT = {}
 
-distTGT={}
-
-for i in PRT[SelCHAIN]:
-    for j in PRT[SelCHAIN][i]:
-        distance=dist([TGT[5], TGT[6], TGT[7]], [j[5], j[6], j[7]])
-        if j[4] not in distTGT:
-            distTGT[j[4]] = distance
-        elif j[4] in distTGT:
-            if distance < float(distTGT[j[4]]):
-                distTGT[j[4]] = distance
+for i in PRT[SEL_CHAIN]:
+    for j in PRT[SEL_CHAIN][i]:
+        distance = ut.dist([TGT[5], TGT[6], TGT[7]], [j[5], j[6], j[7]])
+        if j[4] not in DIST_TGT:
+            DIST_TGT[j[4]] = distance
+        elif j[4] in DIST_TGT:
+            if distance < float(DIST_TGT[j[4]]):
+                DIST_TGT[j[4]] = distance
         else:
-            print('ERROR!')
+            print("ERROR!")
 
-POS_AA = ['ARG', 'HIS', 'LYS']
-NEG_AA = ['ASP', 'GLU']
+POS_AA = ["ARG", "HIS", "LYS"]
+NEG_AA = ["ASP", "GLU"]
 
 try:
     while True:
-        THR_DIST = float(input('Select cutoff distance...\t'))
-        print('\n\nResID\tDIST\tAA\tCHARGE\n'.format(THR_DIST))
-        for i in distTGT:
-            if distTGT[i] <= THR_DIST and PRT[SelCHAIN][i][0][2] in POS_AA:
-                print('{}\t{:.3f}\t{}\t+1'.format(i, distTGT[i], PRT[SelCHAIN][i][0][2]))
-            elif distTGT[i] <= THR_DIST and PRT[SelCHAIN][i][0][2] in NEG_AA:
-                print('{}\t{:.3f}\t{}\t-1'.format(i, distTGT[i], PRT[SelCHAIN][i][0][2]))
-            elif distTGT[i] <= THR_DIST:
-                print('{}\t{:.3f}\t{}'.format(i, distTGT[i], PRT[SelCHAIN][i][0][2]))
+        THR_DIST = float(input("Select cutoff distance...\t"))
+        print("\n\nResID\tDIST\tAA\tCHARGE\n")
+        for i in DIST_TGT:
+            if DIST_TGT[i] <= THR_DIST and PRT[SEL_CHAIN][i][0][2] in POS_AA:
+                print("{}\t{:.3f}\t{}\t+1".format(i, DIST_TGT[i], PRT[SEL_CHAIN][i][0][2]))
+            elif DIST_TGT[i] <= THR_DIST and PRT[SEL_CHAIN][i][0][2] in NEG_AA:
+                print("{}\t{:.3f}\t{}\t-1".format(i, DIST_TGT[i], PRT[SEL_CHAIN][i][0][2]))
+            elif DIST_TGT[i] <= THR_DIST:
+                print("{}\t{:.3f}\t{}".format(i, DIST_TGT[i], PRT[SEL_CHAIN][i][0][2]))
 except KeyboardInterrupt:
-    print('\n\nClosed by user...bye bye...')
+    print("\n\nClosed by user...bye bye...")
