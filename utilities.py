@@ -9,10 +9,6 @@ def dist(atom_a, atom_b):
     Returns:
         [type]: Distance between atom_a and atom_b
     """
-
-    Calulate the distance between two atoms
-    atom_a = [X, Y, Z]
-
     atom_a = np.array(atom_a)
     atom_b = np.array(atom_b)
     return np.linalg.norm(atom_a - atom_b)
