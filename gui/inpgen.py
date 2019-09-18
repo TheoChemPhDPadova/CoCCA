@@ -4,7 +4,6 @@ from PyQt5.QtGui import *
 from PyQt5 import QtCore
 import sys, time, random, json, coor
 
-
 class Second(QMainWindow):
     def __init__(self, parent=None):
         super(Second, self).__init__(parent)

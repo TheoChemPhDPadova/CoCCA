@@ -53,8 +53,8 @@ def const_gen():
                     vecout.append(("%GEOM"))
                     vecout.append(("  Constraints"))
                     for i in CONST_INDEX:
-                    vecout.append(("    {C", i-1, "C}"))
-                    vecout.append(("  End"))
+                        vecout.append(("    {C", i-1, "C}"))
+                        vecout.append(("  End"))
                     vecout.append(("END"))
                     CONST_INDEX[:] = [x - 1 for x in CONST_INDEX]
                     FREE_INDEX[:] = [x - 1 for x in FREE_INDEX]
@@ -72,20 +72,20 @@ def const_gen():
                     for i in CONST_INDEX:
                         vecout.append(("X", i, "F"))
                         vecout.append(("\nTo project-out the immaginary frequencies due to frozen atoms in a vibrational analysis change the coordinates using the frozen syntax (Atom 0/-1 X Y Z):\n"))
-                        for idx, val in enumerate(XMOL.element):
-                            if idx+1 in FREE_INDEX:
-                                vecout.append(("{}   {} \t{:.10f}\t {:.10f}\t {:.10f}".format(val, "0", XMOL.xyz[idx][0], XMOL.xyz[idx][1], XMOL.xyz[idx][2])))
-                            elif idx+1 in CONST_INDEX:
-                                vecout.append(("{}  {} \t{:.10f}\t {:.10f}\t {:.10f}".format(val, "-1", XMOL.xyz[idx][0], XMOL.xyz[idx][1], XMOL.xyz[idx][2])))
-                            else:
-                                vecout.append(("ERROR!!! Something wrong just happened... :("))
+                    for idx, val in enumerate(XMOL.element):
+                        if idx+1 in FREE_INDEX:
+                            vecout.append(("{}   {} \t{:.10f}\t {:.10f}\t {:.10f}".format(val, "0", XMOL.xyz[idx][0], XMOL.xyz[idx][1], XMOL.xyz[idx][2])))
+                        elif idx+1 in CONST_INDEX:
+                            vecout.append(("{}  {} \t{:.10f}\t {:.10f}\t {:.10f}".format(val, "-1", XMOL.xyz[idx][0], XMOL.xyz[idx][1], XMOL.xyz[idx][2])))
+                        else:
+                            vecout.append(("ERROR!!! Something wrong just happened... :("))
 
             elif SOFT == "3":
                     XTB_OPT = "y"#input("Do you like to freeze atoms in hessian calculation? (All immaginary mode due to frozen atoms will be projected out) [y/n]\n")
                     vecout.append(("\n$fix"))
                     for i in CONST_INDEX:
                         vecout.append(("atoms:", i))
-                        if XTB_OPT == "y":
-                            for i in CONST_INDEX:
-                                vecout.append(("freeze:", i))
-                                vecout.append(("end"))
+                    if XTB_OPT == "y":
+                        for i in CONST_INDEX:
+                            vecout.append(("freeze:", i))
+                            vecout.append(("end"))
