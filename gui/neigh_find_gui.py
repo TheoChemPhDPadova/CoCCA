@@ -24,21 +24,26 @@ class FormWidget(QWidget):
         self.layout=QGridLayout(self)
         self.resize(800,800)
 
-        self.go=QPushButton("GO")
+        self.go=QPushButton("Detect")
         self.print=QPushButton("print")
 
         self.chain=QLabel("Chain")
         self.chain_list=QListWidget()
-        self.pdb=coor.PDB("./example.pdb")
-        for item in self.pdb.prot:
-        	self.chain_list.addItem(item)
+        
 
-        self.residue=QLabel("Residue Type")
+        self.residue=QLabel("Residue Number")
         self.res_list=QTextEdit()
 
-        self.cutoff=QTextEdit()
 
+        self.cutoff_val=QTextEdit("0")
+        self.cutoff=QLabel("Cutoff Value")
+
+        self.res=QLabel("Atom Types Detected")
         self.res_at=QListWidget()
+
+        self.path_to_file=QLabel("Path to PDB file")
+        self.path=QTextEdit()
+        self.open=QPushButton("Open PDB")
 
         self.neigh_list=QTextEdit()
 
@@ -53,19 +58,26 @@ class FormWidget(QWidget):
 
         self.go.clicked.connect(self.find_neighbor)
         self.print.clicked.connect(self.print_neigh)
+        self.open.clicked.connect(self.open_pdb)
 
 
 
 
-        self.layout.addWidget(self.chain)
-        self.layout.addWidget(self.chain_list)
-        self.layout.addWidget(self.residue)
-        self.layout.addWidget(self.res_list)
-        self.layout.addWidget(self.res_at)
-        self.layout.addWidget(self.go)
-        self.layout.addWidget(self.neigh_list)
-        self.layout.addWidget(self.print)
-        self.layout.addWidget(self.cutoff)
+        self.layout.addWidget(self.path_to_file,0,0,1,1)
+        self.layout.addWidget(self.path,0,1,1,1)
+        self.layout.addWidget(self.open,1,0,1,2)
+        self.layout.addWidget(self.chain,2,0)
+        self.layout.addWidget(self.chain_list,2,1,1,1)
+        self.layout.addWidget(self.residue,3,0)
+        self.layout.addWidget(self.res_list,3,1)
+        self.layout.addWidget(self.go,4,0,1,2)
+        self.layout.addWidget(self.res,5,0,1,1)
+        self.layout.addWidget(self.res_at,5,1,1,1)
+        self.layout.addWidget(self.cutoff,6,0,1,1)
+        self.layout.addWidget(self.cutoff_val,6,1,1,1)
+        self.layout.addWidget(self.neigh_list,0,2,8,1)
+        self.layout.addWidget(self.print,8,2,1,1)
+        
 
 
     
@@ -76,12 +88,18 @@ class FormWidget(QWidget):
         cursor.insertText(text)
         cursor.insertText("\n")
 
-    def find_neighbor(self):
-   		self.PRT = coor.PDB("./example.pdb").prot
-   		self.SEL_CHAIN = self.chain_list.currentItem().text()
-   		self.SEL_RSN = self.res_list.toPlainText()
+    def open_pdb(self):
+      self.PRT = coor.PDB(self.path.toPlainText()).prot
+      self.pdb=coor.PDB(self.path.toPlainText())
+      for item in self.pdb.prot:
+          self.chain_list.addItem(item)
+   		
    		#print("\nDetected Atom Type in", SEL_RSN, PRT[SEL_CHAIN][SEL_RSN][0][2], ":\n")
-   		for i in self.PRT[self.SEL_CHAIN][self.SEL_RSN]:
+
+    def find_neighbor(self):
+      self.SEL_CHAIN = self.chain_list.currentItem().text()
+      self.SEL_RSN = self.res_list.toPlainText()
+      for i in self.PRT[self.SEL_CHAIN][self.SEL_RSN]:
    		    self.res_at.addItem(i[1])
    		    print(">> ", i[1])
    	
@@ -109,7 +127,7 @@ class FormWidget(QWidget):
 
         try:
    		    #while True:
-   		        THR_DIST = float(self.cutoff.toPlainText())#input("Select cutoff distance...\t"))
+   		        THR_DIST = float(self.cutoff_val.toPlainText())#input("Select cutoff distance...\t"))
    		        self.vecout.append("ResID\tDIST\tAA\tCHARGE\n")
    		        for i in DIST_TGT:
    		            if DIST_TGT[i] <= THR_DIST and self.PRT[self.SEL_CHAIN][i][0][2] in POS_AA:
