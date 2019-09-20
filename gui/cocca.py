@@ -7,12 +7,51 @@ import sys, time, random, json, coor, inpgen, neigh_find_gui
 
 
 
+class First(QMainWindow):
+    def __init__(self, parent=None):
+        super(First, self).__init__(parent)
+        self.size=QtCore.QSize(500,800)
+        self.finestra = Window(self)
+        self.finestra.resize(self.size)
+        self.title="CoCCA"
 
+
+        self.setCentralWidget(self.finestra)
+        self.setWindowTitle(self.title)
+
+        self.setStyleSheet("""
+            QPushButton{
+                border: 2px solid #8f8f91;
+                border-radius: 6px;
+                background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #f6f7fa, stop: 1 #dadbde);
+                min-width: 80px;
+            }
+
+            QLabel{
+
+            color: "white";
+            }
+            QCheckBox{
+
+            color: "white";
+            }
+            
+             QMainWindow{
+
+                background-color:#4d4d4d
+
+
+
+            }
+
+            
+                           """)
 
 
 class Window(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self,parent):
+        super(Window, self).__init__(parent)
         self.title = "CoCCA"
         self.top = 200
         self.left = 500
@@ -75,6 +114,11 @@ class Window(QWidget):
 
         self.enter.clicked.connect(self.enter_cocca)
 
+
+
+        
+
+
     def enter_cocca(self):
         if self.anal.isChecked():
             self.dialog = neigh_find_gui.Third()
@@ -107,5 +151,6 @@ class Window(QWidget):
 
 
 App = QApplication(sys.argv)
-window = Window()
+window = First()
+window.show()
 sys.exit(App.exec())

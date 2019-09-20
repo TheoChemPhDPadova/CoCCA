@@ -1,0 +1,3 @@
+module neighfind
+pdb example.pdb
+params A 54 CA 10
