@@ -1,15 +1,14 @@
 """Neighbor finder module"""
-import sys
 import coor
 import utilities as ut
 
 print("""
-    ================================
-            Neighbor Finder
-    ================================
+================================================
+                Neighbor Finder
+================================================
 """)
-
-PRT = coor.PDB(sys.argv[1]).prot
+FILENAME = input("Enter .pdb file path...\t\t")
+PRT = coor.PDB(FILENAME).prot
 SEL_CHAIN = input("Select chain...\t\t\t")
 SEL_RSN = input("Select residue...\t\t")
 print("\nDetected Atom Type in", SEL_RSN, PRT[SEL_CHAIN][SEL_RSN][0][2], ":\n")
@@ -48,4 +47,9 @@ try:
             elif DIST_TGT[i] <= THR_DIST:
                 print("{}\t{:.3f}\t{}".format(i, DIST_TGT[i], PRT[SEL_CHAIN][i][0][2]))
 except KeyboardInterrupt:
-    print("\n\nClosed by user...bye bye...")
+    print("""
+
+================================================
+            CLOSED BY USER - BYE BYE    
+================================================
+""")
