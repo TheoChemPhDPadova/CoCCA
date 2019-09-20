@@ -26,14 +26,17 @@ PARSER.add_argument("--noint", help="Deactivate interactive mode", action="store
 PARSER.add_argument("--input", help="XYZ File")
 PARSER.add_argument("--CE", help="Enter the element(s) to constrain separed by a comma")
 PARSER.add_argument("--CN", help="Atom number(s) to constrain separed by a comma", default="")
-PARSER.add_argument("--UN", help="Atom number(s) to UN-constrain separed by a comma", default="")
+PARSER.add_argument("--UN", help="Atom number(s) to UN-constrain separed by a comma")
 PARSER.add_argument("--soft", help="Software: 1) ORCA 2) Gaussian 3) XTB", choices=["1", "2", "3"])
 ARGS = PARSER.parse_args()
 
 if ARGS.noint:
     FILENAME = ARGS.input
     XMOL = coor.XYZ(FILENAME)
-    INPUT_INDEX = ARGS.CE.split(",")
+    if ARGS.CE is None:
+        INPUT_INDEX = []
+    else:
+        INPUT_INDEX = ARGS.CE.split(",")
 else:
     FILENAME = input("Enter .xyz file path...\t\t")
     XMOL = coor.XYZ(FILENAME)
@@ -48,7 +51,10 @@ if "All" in INPUT_INDEX:
     CONST_INDEX = [i for i in range(1, XMOL.natoms + 1)]
 
 if ARGS.noint:
-    INPUT_INDEX = ARGS.CN.split(",")
+    if ARGS.CN is None:
+        INPUT_INDEX = []
+    else:
+        INPUT_INDEX = ARGS.CN.split(",")
 else:
     INPUT_INDEX = input("\nDo you want to CONSTRAIN some particular atom?\n\n").split()
 
@@ -57,9 +63,13 @@ for i in multiple_parser(INPUT_INDEX):
         CONST_INDEX.append(int(i))
 
 if ARGS.noint:
-    INPUT_INDEX = ARGS.UN.split(",")
+    if ARGS.UN is None:
+        INPUT_INDEX = []
+    else:
+        INPUT_INDEX = ARGS.UN.split(",")
 else:
     INPUT_INDEX = input("\nDo you want to UN-CONSTRAIN some particular atom?\n\n").split()
+    print(INPUT_INDEX)
 
 for i in multiple_parser(INPUT_INDEX):
     if int(i) in CONST_INDEX:
@@ -73,7 +83,7 @@ else:
     SOFT = input("Select software:\n1)\tORCA\n2)\tGaussian\n3)\txTB\n")
 
 if SOFT == "1":
-    print("%GEOM")
+    print("\n%GEOM")
     print("  Constraints")
     for i in CONST_INDEX:
         print("    {C", i-1, "C}")
