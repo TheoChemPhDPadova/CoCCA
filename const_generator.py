@@ -1,5 +1,5 @@
 """Constrain Generator"""
-import coor
+import coor, argparse
 
 def multiple_parser(inp_list):
     """Multiple input parser"""
@@ -21,9 +21,24 @@ print("""
 ================================================\n
 """)
 
-FILENAME = input("Enter .xyz file path...\t\t")
-XMOL = coor.XYZ(FILENAME)
-INPUT_INDEX = input("\nEnter the element(s) to constrain.\nMultiple elements constraints are possible (e.g.: C O).\nDifferent elements must be separated by a SPACE.\nSpecial tokens are allowed (e.g.: All)\n\nSelection\n").split()
+PARSER = argparse.ArgumentParser()
+PARSER.add_argument("--noint", help="Deactivate interactive mode", action="store_true")
+PARSER.add_argument("--input", help="XYZ File")
+PARSER.add_argument("--CE", help="Enter the element(s) to constrain separed by a comma")
+PARSER.add_argument("--CN", help="Atom number(s) to constrain separed by a comma", default="")
+PARSER.add_argument("--UN", help="Atom number(s) to UN-constrain separed by a comma", default="")
+PARSER.add_argument("--soft", help="Software: 1) ORCA 2) Gaussian 3) XTB", choices=["1", "2", "3"])
+ARGS = PARSER.parse_args()
+
+if ARGS.noint:
+    FILENAME = ARGS.input
+    XMOL = coor.XYZ(FILENAME)
+    INPUT_INDEX = ARGS.CE.split(",")
+else:
+    FILENAME = input("Enter .xyz file path...\t\t")
+    XMOL = coor.XYZ(FILENAME)
+    INPUT_INDEX = input("\nEnter the element(s) to constrain.\nMultiple elements constraints are possible (e.g.: C O).\nDifferent elements must be separated by a SPACE.\nSpecial tokens are allowed (e.g.: All)\n\nSelection\n").split()
+
 CONST_INDEX = []
 
 for idx, val in enumerate(XMOL.element):
@@ -32,13 +47,19 @@ for idx, val in enumerate(XMOL.element):
 if "All" in INPUT_INDEX:
     CONST_INDEX = [i for i in range(1, XMOL.natoms + 1)]
 
-INPUT_INDEX = input("\nDo you want to CONSTRAIN some particular atom?\n\n").split()
+if ARGS.noint:
+    INPUT_INDEX = ARGS.CN.split(",")
+else:
+    INPUT_INDEX = input("\nDo you want to CONSTRAIN some particular atom?\n\n").split()
 
 for i in multiple_parser(INPUT_INDEX):
     if int(i) not in CONST_INDEX:
         CONST_INDEX.append(int(i))
 
-INPUT_INDEX = input("\nDo you want to UN-CONSTRAIN some particular atom?\n\n").split()
+if ARGS.noint:
+    INPUT_INDEX = ARGS.UN.split(",")
+else:
+    INPUT_INDEX = input("\nDo you want to UN-CONSTRAIN some particular atom?\n\n").split()
 
 for i in multiple_parser(INPUT_INDEX):
     if int(i) in CONST_INDEX:
@@ -46,7 +67,10 @@ for i in multiple_parser(INPUT_INDEX):
 
 FREE_INDEX = list({int(i) for i in range(1, XMOL.natoms + 1)} - set(CONST_INDEX))
 
-SOFT = input("Select software:\n1)\tORCA\n2)\tGaussian\n3)\txTB\n")
+if ARGS.noint:
+    SOFT = ARGS.soft
+else:
+    SOFT = input("Select software:\n1)\tORCA\n2)\tGaussian\n3)\txTB\n")
 
 if SOFT == "1":
     print("%GEOM")
@@ -80,13 +104,17 @@ elif SOFT == "2":
             print("ERROR!!! Something wrong just happened... :(")
 
 elif SOFT == "3":
-    XTB_OPT = input("Do you like to freeze atoms in hessian calculation? (All immaginary mode due to frozen atoms will be projected out) [y/n]\n")
+
     print("\n$fix")
     for i in CONST_INDEX:
         print("atoms:", i)
-    if XTB_OPT == "y":
-        for i in CONST_INDEX:
-            print("freeze:", i)
+    print("end")
+
+    print("If you like to freeze atoms in hessian calculation (All immaginary mode due to frozen atoms will be projected out) use\n")
+    print("\n$fix")
+    for i in CONST_INDEX:
+        print("atoms: ", i)
+        print("freeze:", i)
     print("end")
 
 print("""
