@@ -144,9 +144,7 @@ class FormWidget(QWidget):
         self.SEL_RSN = self.res_list.toPlainText()
         #if item in self.res_at:
          # self.res_at.remove(item)
-        if len(self.res_at) > 0:
-              for i in range(len(self.res_at)):
-                self.res_at.takeItem(i)
+        self.res_at.clear()
         for i in self.PRT[self.SEL_CHAIN][self.SEL_RSN]:
    		    self.res_at.addItem(i[1])
    		    #print(">> ", i[1])
@@ -205,12 +203,8 @@ class FormWidget(QWidget):
       try:
           self.PRT = coor.PDB(self.path.toPlainText()).prot
           self.pdb=coor.PDB(self.path.toPlainText())
-          if len(self.chain_list) > 0:
-              for i in range(len(self.chain_list)):
-                self.chain_list.takeItem(i)
-          if len(self.res_at) > 0:
-              for i in range(len(self.res_at)):
-                self.res_at.takeItem(i)
+          self.res_at.clear()
+          self.chain_list.clear()
           self.res_list.setText("")
           self.neigh_list.setText("")
           self.cutoff_val.setText("0")
@@ -221,6 +215,7 @@ class FormWidget(QWidget):
           self.path.setText("File not found \nPlease insert file path")
 
     def run_input(self):
+      self.interactive=False
       try:
         a=[]
         with open(self.inputpath.toPlainText(),"r") as gi:
@@ -232,14 +227,11 @@ class FormWidget(QWidget):
             self.SEL_AT = a[2][3]
             self.PRT = coor.PDB(a[1][1]).prot
             print(self.SEL_AT, self.SEL_CHAIN, self.SEL_RSN)
-            if len(self.chain_list) > 0:
-              for i in range(self.chain_list.count()):
-                self.chain_list.takeItem(i)
+            #print(self.chain_list.Item(4))
+            self.chain_list.clear()
             self.chain_list.addItem(a[2][1])
             self.res_list.setText(a[2][2])
-            if len(self.res_at) > 0:
-              for i in range(self.res_at.count()):
-                self.res_at.takeItem(i)
+            self.res_at.clear()
             self.res_at.addItem(a[2][3])
             self.cutoff_val.setText(a[2][4])
             self.dist=a[2][4]
