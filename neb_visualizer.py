@@ -1,16 +1,26 @@
 """Neb Visualizer"""
+import argparse
 import matplotlib.pyplot as plt
+import constants as k
 
 print("""
 ================================================
-            NEB Visualizer (ORCA)
+            NEB Visualizer (ORCA)  
 ================================================\n
 """)
 
-with open("1.interp") as file:
+PARSER = argparse.ArgumentParser()
+PARSER.add_argument("-i", "--input", type=str, help="Path of the .interp file (ORCA)")
+ARGS = PARSER.parse_args()
+
+if ARGS.input:
+    FILENAME = ARGS.input
+else:
+    FILENAME = input("Enter .interp file path...\t\t")
+
+with open(FILENAME) as file:
     lines = file.readlines()
 
-HAKC = 627.509
 idx_pts = []
 idx_int = []
 
@@ -26,29 +36,29 @@ int_n = idx_pts[1] - idx_int[0] - 3
 for i in idx_pts:
     if i == idx_pts[0]:
         x = [float(lines[j].split()[0]) for j in range(i, i+pts_n)]
-        y = [float(lines[j].split()[2])*HAKC for j in range(i, i+pts_n)]
+        y = [float(lines[j].split()[2])*k.ha2kcal for j in range(i, i+pts_n)]
         plt.scatter(x, y, s=15, c="orange")
     elif i == idx_pts[-1]:
         x = [float(lines[j].split()[0]) for j in range(i, i+pts_n)]
-        y = [float(lines[j].split()[2])*HAKC for j in range(i, i+pts_n)]
+        y = [float(lines[j].split()[2])*k.ha2kcal for j in range(i, i+pts_n)]
         plt.scatter(x, y, s=15, c="cornflowerblue", zorder=10)
     else:
         x = [float(lines[j].split()[0]) for j in range(i, i+pts_n)]
-        y = [float(lines[j].split()[2])*HAKC for j in range(i, i+pts_n)]
+        y = [float(lines[j].split()[2])*k.ha2kcal for j in range(i, i+pts_n)]
         plt.scatter(x, y, s=7, c="gainsboro")
 
 for i in idx_int:
     if i == idx_int[0]:
         x = [float(lines[j].split()[0]) for j in range(i, i+int_n)]
-        y = [float(lines[j].split()[2])*HAKC for j in range(i, i+int_n)]
+        y = [float(lines[j].split()[2])*k.ha2kcal for j in range(i, i+int_n)]
         plt.plot(x, y, c="orange")
     elif i == idx_int[-1]:
         x = [float(lines[j].split()[0]) for j in range(i, i+int_n)]
-        y = [float(lines[j].split()[2])*HAKC for j in range(i, i+int_n)]
+        y = [float(lines[j].split()[2])*k.ha2kcal for j in range(i, i+int_n)]
         plt.plot(x, y, c="cornflowerblue", zorder=10)
     else:
         x = [float(lines[j].split()[0]) for j in range(i, i+int_n)]
-        y = [float(lines[j].split()[2])*HAKC for j in range(i, i+int_n)]
+        y = [float(lines[j].split()[2])*k.ha2kcal for j in range(i, i+int_n)]
         plt.plot(x, y, c="gainsboro")
 
 plt.xlim(0, 1)
