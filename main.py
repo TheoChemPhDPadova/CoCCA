@@ -59,6 +59,7 @@ def analysis():
     header()
     print("""
 1) Neighbor Finder (PDB)
+2) NEB Visualizer (ORCA)
 
 b) Back to Main Menu
 q) Exit
@@ -66,6 +67,8 @@ q) Exit
     choice = input("\nSelection:\t")
     if choice == "1":
         os.system("python3 " + sys.path[0] + "/neigh_finder.py")
+    elif choice == "2":
+        os.system("python3 " + sys.path[0] + "/neb_visualizer.py")
     elif choice == "b":
         main()
     elif choice == "q":
@@ -88,4 +91,8 @@ q) Exit
     elif choice == "q":
         quit()
 
-main()
+if len(sys.argv) == 1:
+    main()
+elif sys.argv[1].split(".")[-1] == "interp":
+    header()
+    os.system("python3 " + sys.path[0] + "/neb_visualizer.py -i " + sys.argv[1])
