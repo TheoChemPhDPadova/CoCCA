@@ -1,13 +1,45 @@
-import coor
 import constants
 import numpy as np
 import matplotlib.pyplot as plt
+
+def write_xmol(elements, coordinates, path):
+        """Saving to the "path" a XMol type file from a list of "elements" and their
+        "coordinates" arranged as a list of lists ordered ad [[x1, y1, z1],[x2, y2, z2]...]"""
+        if len(elements) != len(coordinates):
+            print("ERROR: the lists are of different length")
+        draft = open(path, "w")
+        draft.write("{}\n\n".format(str(len(elements))))
+        for idnx, val in enumerate(elements):
+            draft.write("{} \t{:.10f}\t {:.10f}\t {:.10f} \n".format(
+                val,
+                coordinates[idnx][0],
+                coordinates[idnx][1],
+                coordinates[idnx][2]
+                ))
 
 def molecule_compare(mol_1, mol_2, verbose=False):
     """
     Return True if the two molecules are equal and the .xyz files have the same ordering. 
     If a verbose output is required the flag "verbose=True" can be set
     """
+    def __init__(self, path):
+        try:
+            print("XYZ Loading...\t\t\t", end="", flush=True)
+            with open(path) as file:
+                lines = file.readlines()
+            self.natoms = int(lines[0])
+            self.element = []
+            self.xyz = []
+            for line in lines[2:]:
+                line = line.split()
+                self.element.append(line[0])
+                self.xyz.append([float(line[1]), float(line[2]), float(line[3])])
+            print("Done!")
+            print("Atoms...\t\t\t{}".format(str(self.natoms)))
+            print("Elements in molecule:\t\t{}".format(", ".join(set(self.element))))
+        except FileNotFoundError as detail:
+            print("\n{}".format(detail))
+            quit()
     #Check if the arguments are MOL class istances
     if isinstance(mol_1, MOL) == False or isinstance(mol_2, MOL) == False:
         print(""""ERROR: The function "molecule_compare" can handle only MOL class type objects""")
@@ -28,11 +60,11 @@ def molecule_compare(mol_1, mol_2, verbose=False):
             return False
 
 
-def rigid_linear_transit(mol_start, mol_end, steps, filename):
+def rigid_linear_transit(mol_start, mol_end, steps, path):
     """
     Generate the .xyz files corresponding to a rigid linear transit from the start structure
     "mol_start" to the end one "mol_end" with a number of step set by the variable "steps".
-    The generated files have the name "root_step.xyz" in which root is set by the varibale "filename"
+    The generated files have the name "root_step.xyz" in which root is set by the varibale "path"
     """
     #Check if the molecules are isomers of the same molecule and if the atom ordering is the same
     if molecule_compare(mol_start, mol_end) == False:
@@ -47,17 +79,14 @@ def rigid_linear_transit(mol_start, mol_end, steps, filename):
         total_displacement.append(my_list)
     #Iterate over each step of the linear transit
     for step in range(1, steps+1):
-        out_file = open(filename + "_" + str(step) + ".xyz", 'w')
-        out_file.write(str(mol_start.natoms) + "\n")
-        out_file.write('\n')
-        #Compute the new position of each atom in the file
+        new_path = str(path) + "_" + str(step) + ".xyz"
+        new_coord = []
         for atom in range(0, mol_start.natoms):
-            out_file.write(mol_start.element[atom])
+            new_coord_line = []
             for coord in range(0, 3):
-                new_coord = mol_start.xyz[atom][coord] + total_displacement[atom][coord]*step/(steps + 1)
-                out_file.write('\t' + str(new_coord))
-            out_file.write('\n')
-        out_file.close()
+                new_coord_line.append(mol_start.xyz[atom][coord] + total_displacement[atom][coord]*step/(steps + 1))
+            new_coord.append(new_coord_line)
+        write_xmol(mol_start.elements, new_coord, new_path)        
 
 
 def plot_ir_spectrum(molecule, *args, style="bar", resolution=0.1, path="", show=True):
@@ -151,7 +180,7 @@ def plot_ir_spectrum(molecule, *args, style="bar", resolution=0.1, path="", show
         plt.show()
 
 
-class MOL(coor.XYZ):
+class MOL:
     """The MOL class allow the loading and the manipulation of molecular data"""
     def mass(self):
         """Returns the mass of the molecule in u.m.a."""
