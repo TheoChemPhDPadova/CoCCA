@@ -93,11 +93,12 @@ q) Exit
 
 if len(sys.argv) == 1:
     main()
-elif sys.argv[1].split(".")[-1] == "interp":
+else:
     header()
-    print("\nDetected .interp file. Opening as fast as i can...")
-    os.system("python3 " + sys.path[0] + "/neb_visualizer.py -i " + sys.argv[1])
-elif sys.argv[1].split(".")[-1] == "out":
-    header()
-    print("\nDetected .out file. Opening as fast as i can...")
-    os.system("python3 " + sys.path[0] + "/output_sum.py " + sys.argv[1])
+    if sys.argv[1].split(".")[-1] == "interp":
+        print("\nQUICK MODE: Detected .interp file. Opening as fast as I can...")
+        os.system("python3 " + sys.path[0] + "/neb_visualizer.py -i " + sys.argv[1])
+    elif sys.argv[1].split(".")[-1] == "out":
+        header()
+        print("\nQUICK MODE: Detected .out file. Opening as fast as I can...")
+        os.system("python3 " + sys.path[0] + "/output_sum.py " + sys.argv[1])
