@@ -95,4 +95,9 @@ if len(sys.argv) == 1:
     main()
 elif sys.argv[1].split(".")[-1] == "interp":
     header()
+    print("\nDetected .interp file. Opening as fast as i can...")
     os.system("python3 " + sys.path[0] + "/neb_visualizer.py -i " + sys.argv[1])
+elif sys.argv[1].split(".")[-1] == "out":
+    header()
+    print("\nDetected .out file. Opening as fast as i can...")
+    os.system("python3 " + sys.path[0] + "/output_sum.py " + sys.argv[1])
