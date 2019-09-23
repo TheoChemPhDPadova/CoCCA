@@ -92,16 +92,27 @@ def plot_ir_spectrum(molecule, *args, style="bar", resolution=0.1, path="", show
     #Extract the data of frequency and intensity for each band neglecting the zero frequency modes
     vibr_freq = []
     trans_int = []
+    degeneracy = []
     if hasattr(molecule, 'ir_spectrum'):
         f_list = [i[0] for i in molecule.ir_spectrum]
         i_list = [i[1] for i in molecule.ir_spectrum]
         for i in range(0, len(f_list)):
             if f_list[i] != 0:
-                vibr_freq.append(f_list[i])
-                trans_int.append(i_list[i])
+                #Check if degenerate modes are present
+                if f_list[i] in vibr_freq:
+                    degenerate_index = vibr_freq.index(f_list[i])
+                    trans_int[degenerate_index] += i_list[i]
+                    degeneracy[degenerate_index] += 1
+                else:
+                    vibr_freq.append(f_list[i])
+                    trans_int.append(i_list[i])
+                    degeneracy.append(1)
     else:
         print("ERROR: The object " + str(molecule) + " has no IR spectrum data loaded")
         quit()
+    print("IR spectrum data [frequency (cm^-1), intensity (km/mol), degeneracy]")
+    for index in range(0, len(vibr_freq)):
+        print(vibr_freq[index], trans_int[index], degeneracy[index])
     #Initialize a figure object
     fig, ax = plt.subplots(figsize=(18, 7))
     #Check the type of plot selected
@@ -123,6 +134,8 @@ def plot_ir_spectrum(molecule, *args, style="bar", resolution=0.1, path="", show
             spectrum.append(point)
             f += float(resolution)
         ax.plot(frequency_axis, spectrum, color='red')
+        (markers, stemlines, baseline) = ax.stem(vibr_freq, trans_int, markerfmt=' ')
+        plt.setp(baseline, visible=False)
     else:
         print("ERROR: The style option " + str(style) + " is not valid" )
     ax.set_xlabel(r"Wavenumber [$cm^{-1}$]")
@@ -253,4 +266,58 @@ class MOL(coor.XYZ):
                 if verbose == True: print("WARNING: no infrared spectrum matrix found")
         except FileNotFoundError as detail:
             print("\n{}".format(detail))
+            quit()
+        
+    def get_normal_mode(self, k, style="xyz", coord_type="cartesian", verbose=True):
+        '''
+        Returns the kth-normal mode of vibration. The output style can be selected by setting the
+        flag style. If style is set to "linear" the mode is returned as a plain list of coefficients,
+        while if the style is set to "xyz" (default) a list of lists containing the xyz displacement
+        ordered by atom is returned. The coord_type of the dispacement can be set to "cartesian" (default)
+        or "mass_weighted". The flag verbose allow to select if a verbose output is required
+        '''
+        if hasattr(self, "normal_modes_matrix"):
+            if k < 0 or k >= self.natoms*3:
+                if verbose == True: print("ERROR: Index of normal mode out of range")
+                quit()
+            column = [col[k] for col in self.normal_modes_matrix]
+            if style == "xyz":
+                xyz_mode = []
+                for row in range(0, int(len(column)/3)):
+                    atom_disp = []
+                    for coord in range(0, 3):
+                        atom_disp.append(column[3*row + coord])
+                    xyz_mode.append(atom_disp)
+                if coord_type == "cartesian":
+                    return xyz_mode
+                elif coord_type == "mass_weighted":
+                    mass_weighted_mode = []
+                    for atom, line in enumerate(xyz_mode):
+                        mass_factor = np.sqrt(constants.atomic_mass[self.element[atom]])
+                        mass_weighted_atom_disp = []
+                        for coord in range(0, 3):
+                            mass_weighted_atom_disp.append(mass_factor*line[coord])
+                        mass_weighted_mode.append(mass_weighted_atom_disp)
+                    return mass_weighted_mode
+                else:
+                    if verbose == True: print("""ERROR: The coordinate type """"" + str(coord_type) + """" is not a supported one""")
+                    quit()
+            elif style == "linear":
+                if coord_type == "cartesian":
+                    return column
+                elif coord_type == "mass_weighted":
+                    mass_weighted_mode = []
+                    for atom in range(0, int(len(column)/3)):
+                        mass_factor = np.sqrt(constants.atomic_mass[self.element[atom]])
+                        for coord in range(0, 3):
+                            mass_weighted_mode.append(mass_factor*column[atom*3 + coord])
+                    return mass_weighted_mode
+                else:
+                    if verbose == True: print("ERROR: The coordinate type " + str(coord_type) + " is not a supported one")
+                    quit()
+            else:
+                if verbose == True: print("ERROR: The style " + str(style) + " is not available")
+            quit()
+        else:
+            if verbose == True: print("ERROR: no normal modes matrix found")
             quit()
