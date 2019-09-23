@@ -22,24 +22,6 @@ def molecule_compare(mol_1, mol_2, verbose=False):
     Return True if the two molecules are equal and the .xyz files have the same ordering. 
     If a verbose output is required the flag "verbose=True" can be set
     """
-    def __init__(self, path):
-        try:
-            print("XYZ Loading...\t\t\t", end="", flush=True)
-            with open(path) as file:
-                lines = file.readlines()
-            self.natoms = int(lines[0])
-            self.element = []
-            self.xyz = []
-            for line in lines[2:]:
-                line = line.split()
-                self.element.append(line[0])
-                self.xyz.append([float(line[1]), float(line[2]), float(line[3])])
-            print("Done!")
-            print("Atoms...\t\t\t{}".format(str(self.natoms)))
-            print("Elements in molecule:\t\t{}".format(", ".join(set(self.element))))
-        except FileNotFoundError as detail:
-            print("\n{}".format(detail))
-            quit()
     #Check if the arguments are MOL class istances
     if isinstance(mol_1, MOL) == False or isinstance(mol_2, MOL) == False:
         print(""""ERROR: The function "molecule_compare" can handle only MOL class type objects""")
@@ -182,6 +164,24 @@ def plot_ir_spectrum(molecule, *args, style="bar", resolution=0.1, path="", show
 
 class MOL:
     """The MOL class allow the loading and the manipulation of molecular data"""
+    def __init__(self, path):
+        try:
+            print("XYZ Loading...\t\t\t", end="", flush=True)
+            with open(path) as file:
+                lines = file.readlines()
+            self.natoms = int(lines[0])
+            self.element = []
+            self.xyz = []
+            for line in lines[2:]:
+                line = line.split()
+                self.element.append(line[0])
+                self.xyz.append([float(line[1]), float(line[2]), float(line[3])])
+            print("Done!")
+            print("Atoms...\t\t\t{}".format(str(self.natoms)))
+            print("Elements in molecule:\t\t{}".format(", ".join(set(self.element))))
+        except FileNotFoundError as detail:
+            print("\n{}".format(detail))
+            quit()
     def mass(self):
         """Returns the mass of the molecule in u.m.a."""
         m = 0
