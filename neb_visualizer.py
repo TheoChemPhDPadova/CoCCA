@@ -31,7 +31,11 @@ for idx, val in enumerate(lines):
         idx_int.append(idx + 1)
 
 pts_n = idx_int[0] - 6
-int_n = idx_pts[1] - idx_int[0] - 3
+
+if len(idx_pts) != 1:
+    int_n = idx_pts[1] - idx_int[0] - 3
+else:
+    int_n = len(lines) - idx_int[0]
 
 for i in idx_pts:
     if i == idx_pts[0]:
