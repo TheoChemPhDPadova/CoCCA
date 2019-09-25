@@ -206,6 +206,8 @@ Select the ID of the molecules divided by comma
                 print("\tx:\t" + str(myMol.rcm()[0]))
                 print("\ty:\t" + str(myMol.rcm()[1]))
                 print("\tz:\t" + str(myMol.rcm()[2]))
+            input("\nPress enter to return to the menu ...   ")
+            molecule_interface()
         elif calculation_choice == "b":
             molecule_interface()
         elif calculation_choice == "q":
@@ -246,4 +248,14 @@ else:
         header()
         print("\nQUICK MODE: Detected .out file. Opening as fast as I can...")
         os.system("python3 " + sys.path[0] + "/output_sum.py " + sys.argv[1])
-    elif sys.argv[1].split(".")[-1] == "load":
+    elif sys.argv[1] == "load":
+        print("\nQUICK MODE: Detected load instruction.\nLoading .xyz files...")
+        print("------------------------------------------------")
+        for i, argument in enumerate(sys.argv):
+            if i>1 and argument.split(".")[-1] == "xyz":
+                MOL_LIST.append(mol.MOL(argument))
+                print("Molecule saved with the ID:\t" + str(len(MOL_LIST)))
+        print("------------------------------------------------")
+        print("Loading DONE. " + str(len(MOL_LIST)) + " files loaded succesfully")
+        input("\nPress enter to continue ...   ")
+        main()
