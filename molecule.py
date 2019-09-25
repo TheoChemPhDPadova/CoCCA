@@ -68,7 +68,7 @@ def rigid_linear_transit(mol_start, mol_end, steps, path):
             for coord in range(0, 3):
                 new_coord_line.append(mol_start.xyz[atom][coord] + total_displacement[atom][coord]*step/(steps + 1))
             new_coord.append(new_coord_line)
-        write_xmol(mol_start.elements, new_coord, new_path)        
+        write_xmol(mol_start.element, new_coord, new_path)        
 
 
 def plot_ir_spectrum(molecule, *args, style="bar", resolution=0.1, path="", show=True):
@@ -121,9 +121,10 @@ def plot_ir_spectrum(molecule, *args, style="bar", resolution=0.1, path="", show
     else:
         print("ERROR: The object " + str(molecule) + " has no IR spectrum data loaded")
         quit()
-    print("IR spectrum data [frequency (cm^-1), intensity (km/mol), degeneracy]")
-    for index in range(0, len(vibr_freq)):
-        print(vibr_freq[index], trans_int[index], degeneracy[index])
+    if show==True:
+        print("IR spectrum data [frequency (cm^-1), intensity (km/mol), degeneracy]")
+        for index in range(0, len(vibr_freq)):
+            print(vibr_freq[index], trans_int[index], degeneracy[index])
     #Initialize a figure object
     fig, ax = plt.subplots(figsize=(18, 7))
     #Check the type of plot selected
@@ -166,7 +167,7 @@ class MOL:
     """The MOL class allow the loading and the manipulation of molecular data"""
     def __init__(self, path):
         try:
-            print("XYZ Loading...\t\t\t", end="", flush=True)
+            print("\nXYZ Loading...\t\t\t", end="", flush=True)
             with open(path) as file:
                 lines = file.readlines()
             self.natoms = int(lines[0])
@@ -182,6 +183,8 @@ class MOL:
         except FileNotFoundError as detail:
             print("\n{}".format(detail))
             quit()
+        self.name = path.split("/")[-1].split(".xyz")[-2]
+        print("Molecule name:\t\t\t" + str(self.name))
     def mass(self):
         """Returns the mass of the molecule in u.m.a."""
         m = 0
