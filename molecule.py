@@ -107,15 +107,15 @@ def plot_ir_spectrum(molecule, *args, style="bar", resolution=0.1, path="", show
     if hasattr(molecule, 'ir_spectrum'):
         f_list = [i[0] for i in molecule.ir_spectrum]
         i_list = [i[1] for i in molecule.ir_spectrum]
-        for i in range(0, len(f_list)):
-            if f_list[i] != 0:
+        for i, element in enumerate(f_list):
+            if element != 0:
                 #Check if degenerate modes are present
-                if f_list[i] in vibr_freq:
-                    degenerate_index = vibr_freq.index(f_list[i])
+                if element in vibr_freq:
+                    degenerate_index = vibr_freq.index(element)
                     trans_int[degenerate_index] += i_list[i]
                     degeneracy[degenerate_index] += 1
                 else:
-                    vibr_freq.append(f_list[i])
+                    vibr_freq.append(element)
                     trans_int.append(i_list[i])
                     degeneracy.append(1)
     else:
@@ -123,8 +123,8 @@ def plot_ir_spectrum(molecule, *args, style="bar", resolution=0.1, path="", show
         quit()
     if show==True:
         print("IR spectrum data [frequency (cm^-1), intensity (km/mol), degeneracy]")
-        for index in range(0, len(vibr_freq)):
-            print(vibr_freq[index], trans_int[index], degeneracy[index])
+        for i, element in enumerate(vibr_freq):
+            print(str(element) + "\t" + str(trans_int[i]) + "\t", str(degeneracy[i]))
     #Initialize a figure object
     fig, ax = plt.subplots(figsize=(18, 7))
     #Check the type of plot selected
@@ -312,41 +312,30 @@ class MOL:
             if k < 0 or k >= self.natoms*3:
                 if verbose == True: print("ERROR: Index of normal mode out of range")
                 quit()
-            column = [col[k] for col in self.normal_modes_matrix]
-            if style == "xyz":
-                xyz_mode = []
-                for row in range(0, int(len(column)/3)):
-                    atom_disp = []
-                    for coord in range(0, 3):
-                        atom_disp.append(column[3*row + coord])
-                    xyz_mode.append(atom_disp)
+            column = [col[k] for col in self.normal_modes_matrix]   #Extract a column from the normal modes matrix
+            if style == "linear":
                 if coord_type == "cartesian":
-                    return xyz_mode
+                    return column                                   #If cartesian is selected directly return the column as list
                 elif coord_type == "mass_weighted":
                     mass_weighted_mode = []
-                    for atom, line in enumerate(xyz_mode):
-                        mass_factor = np.sqrt(constants.atomic_mass[self.element[atom]])
-                        mass_weighted_atom_disp = []
-                        for coord in range(0, 3):
-                            mass_weighted_atom_disp.append(mass_factor*line[coord])
-                        mass_weighted_mode.append(mass_weighted_atom_disp)
-                    return mass_weighted_mode
-                else:
-                    if verbose == True: print("""ERROR: The coordinate type """"" + str(coord_type) + """" is not a supported one""")
-                    quit()
-            elif style == "linear":
-                if coord_type == "cartesian":
-                    return column
-                elif coord_type == "mass_weighted":
-                    mass_weighted_mode = []
-                    for atom in range(0, int(len(column)/3)):
-                        mass_factor = np.sqrt(constants.atomic_mass[self.element[atom]])
-                        for coord in range(0, 3):
-                            mass_weighted_mode.append(mass_factor*column[atom*3 + coord])
-                    return mass_weighted_mode
+                    for index, value in enumerate(column):
+                        atom = int((index-index%3)/3)                                       #Compute the index of the atom
+                        mass_factor = np.sqrt(constants.atomic_mass[self.element[atom]])    #Compute the mass correction factor
+                        mass_weighted_mode.append(mass_factor*value)                        #Compute the value of the component in mass weighted coordiantes
+                    return mass_weighted_mode                                               #Return the mass weighted vector as a list
                 else:
                     if verbose == True: print("ERROR: The coordinate type " + str(coord_type) + " is not a supported one")
                     quit()
+            elif style == "xyz":
+                list_format = self.get_normal_mode(k, style="linear", coord_type=coord_type, verbose=verbose)    #Call the linear module
+                #Reshape the list as a list of lists as [x, y, z]
+                xyz_format = []
+                for atom in range(0, int(len(column)/3)):
+                    line = []
+                    for coord in range(0, 3):
+                        line.append(list_format[3*atom + coord])
+                    xyz_format.append(line)
+                return xyz_format
             else:
                 if verbose == True: print("ERROR: The style " + str(style) + " is not available")
             quit()
