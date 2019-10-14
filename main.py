@@ -41,14 +41,14 @@ def data_manipulation():
     """Data Manipulation menu"""
     header()
     print("""
-1) ...
+1) Linear interpolation of a trajectory (GENERAL/ORCA)
 
 b) Back to Main Menu
 q) Exit
     """)
     choice = input("\nSelection:\t")
     if choice == "1":
-        pass
+        os.system("python3 " + sys.path[0] + "/trj_interp.py")
     elif choice == "b":
         main()
     elif choice == "q":
