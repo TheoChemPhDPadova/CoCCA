@@ -1,7 +1,14 @@
 """Neb Visualizer"""
-import argparse
+import argparse, readline, glob
 import matplotlib.pyplot as plt
 import constants as k
+
+def complete(text, state):
+    return (glob.glob(text+'*')+[None])[state]
+
+readline.set_completer_delims(' \t\n;')
+readline.parse_and_bind("tab: complete")
+readline.set_completer(complete)
 
 print("""
 ================================================

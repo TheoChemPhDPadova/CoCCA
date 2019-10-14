@@ -1,5 +1,12 @@
 """Constrain Generator"""
-import coor
+import coor, readline, glob
+
+def complete(text, state):
+    return (glob.glob(text+'*')+[None])[state]
+
+readline.set_completer_delims(' \t\n;')
+readline.parse_and_bind("tab: complete")
+readline.set_completer(complete)
 
 def multiple_parser(inp_list):
     """Multiple input parser"""

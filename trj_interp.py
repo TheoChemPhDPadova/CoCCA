@@ -5,9 +5,15 @@ New number of images is given by the variable npts
 
 Thanks to original author: Vilhjalmur Asgeirsson (UI, 2018) - Script extended and adapted
 """
-import sys
-import os
+import sys, readline, glob, os
 import numpy as np
+
+def complete(text, state):
+    return (glob.glob(text+'*')+[None])[state]
+
+readline.set_completer_delims(' \t\n;')
+readline.parse_and_bind("tab: complete")
+readline.set_completer(complete)
 
 def Displacement(ndim, nim, R):
 
