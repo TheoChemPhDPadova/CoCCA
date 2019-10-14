@@ -31,7 +31,7 @@ class FormWidget(QWidget):
 
         # Add tabs
         self.tabs.addTab(self.tab1,"Constraint Generator")
-        self.tabs.addTab(self.tab2,"Altro")
+        self.tabs.addTab(self.tab2,"NEB Visualizer")
 
         # Create first tab
         self.tab1.layout = QGridLayout(self)
@@ -88,6 +88,30 @@ class FormWidget(QWidget):
         text=str("ciao\n")
         self.pushButton1.clicked.connect(self.constgen)
 
+################TAB2############################
+        self.tab2.layout=QVBoxLayout()
+        self.tab2.label=QLabel("Enter path to .interp file")
+        self.tab2.path_te=QTextEdit()
+        policy = self.tab2.path_te.sizePolicy()
+        policy.setVerticalPolicy(QSizePolicy.Minimum)
+        self.tab2.path_te.setSizePolicy(policy)
+        self.tab2.button=QPushButton("GO")
+
+    
+
+        self.tab2.layout.addWidget(self.tab2.label)
+        self.tab2.layout.addWidget(self.tab2.path_te)
+        self.tab2.layout.addStretch()
+        self.tab2.layout.addWidget(self.tab2.button)
+        self.tab2.setLayout(self.tab2.layout)
+
+        self.tab2.button.clicked.connect(self.neb_viz)
+    
+
+
+
+##############FUNCTIONS##########################
+
     def appendi(self, text):
         self.pippo.setText("")
         cursor = self.pippo.textCursor()
@@ -125,6 +149,13 @@ class FormWidget(QWidget):
         s.write(out)
         s.close()
         #s.close()
+
+    def neb_viz(self):
+        path=self.tab2.path_te.toPlainText()
+        print(path)
+        args=["python", "neb_viz.py","--input", path]
+        subprocess.Popen(args) 
+
 
 
     
