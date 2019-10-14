@@ -46,9 +46,7 @@ for i in multiple_parser(INPUT_INDEX):
 
 FREE_INDEX = list({int(i) for i in range(1, XMOL.natoms + 1)} - set(CONST_INDEX))
 
-print("FROZEN ATOMS:", )
-
-SOFT = input("Select software:\n1)\tORCA\n2)\tGaussian\n3)\txTB\n")
+SOFT = input("\nSelect software:\n1)\tORCA\n2)\tGaussian\n3)\txTB\n")
 
 if SOFT == "1":
     print("\nFROZEN ATOMS:", " ".join([str(x - 1) for x in CONST_INDEX]))
