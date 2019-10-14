@@ -78,7 +78,8 @@ def input_generation():
     """Input Generation menu"""
     header()
     print("""
-1) Constraints Generator (XYZ)
+1) Constraints Generator (XYZ/GENERAL)
+2) TRJ 2 Synchronous Transit-Guided Quasi-Newton (Gaussian)
 
 b) Back to Main Menu
 q) Exit
@@ -86,6 +87,8 @@ q) Exit
     choice = input("\nSelection:\t")
     if choice == "1":
         os.system("python3 " + sys.path[0] + "/const_generator.py")
+    elif choice == "2":
+        os.system("python3 " + sys.path[0] + "/trj2qst.py")
     elif choice == "b":
         main()
     elif choice == "q":
