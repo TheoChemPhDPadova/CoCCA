@@ -42,6 +42,7 @@ def data_manipulation():
     header()
     print("""
 1) Linear interpolation of a trajectory (GENERAL/ORCA)
+2) Trajectory Analyzer/Freezer (GENERAL)
 
 b) Back to Main Menu
 q) Exit
@@ -49,6 +50,8 @@ q) Exit
     choice = input("\nSelection:\t")
     if choice == "1":
         os.system("python3 " + sys.path[0] + "/trj_interp.py")
+    elif choice == "2":
+        os.system("python3 " + sys.path[0] + "/trj_anafrz.py")
     elif choice == "b":
         main()
     elif choice == "q":

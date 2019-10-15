@@ -46,7 +46,8 @@ class TRJ:
             self.trajectory = []
             xyz = []
             snapsidx = [idx for idx, i in enumerate(lines) if i == lines[0]]
-            print("Snapshots...\t\t\t{}".format(str(len(snapsidx))))
+            self.nspas = len(snapsidx)
+            print("Snapshots...\t\t\t{}".format(str(self.nspas)))
 
             for i in snapsidx:
                 xyz = []
