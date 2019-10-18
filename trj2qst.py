@@ -16,14 +16,14 @@ print("""
 """)
 
 TRAJ = coor.TRJ(input("Enter trajectory file path...\t"))
-R_SNAP = int(input("\nSnapshot number before TS...\t"))
+R_SNAP = int(input("\nSnapshot number before TS...\t")) - 1
 TS_SNAP = input("Snapshot number of TS guess...\t")
 if TS_SNAP == "":
     print("Switching to a QST2 input generation...")
 else:
     print("Switching to a QST3 input generation...")
-    TS_SNAP = int(TS_SNAP)
-P_SNAP = int(input("Snapshot number after TS...\t"))
+    TS_SNAP = int(TS_SNAP) - 1
+P_SNAP = int(input("Snapshot number after TS...\t")) - 1
 CHARGE = int(input("Totale charge of the system...\t"))
 MULT = int(input("Multiplicity of the system...\t"))
 FROZ = input("List of frozen atoms (if any)...\t").split()
