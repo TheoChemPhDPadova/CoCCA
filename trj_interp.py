@@ -5,7 +5,7 @@ New number of images is given by the variable npts
 
 Thanks to original author: Vilhjalmur Asgeirsson (UI, 2018) - Script extended and adapted
 """
-import sys, readline, glob, os
+import sys, readline, glob, os, coor
 import numpy as np
 
 def complete(text, state):
@@ -170,6 +170,7 @@ if __name__ == "__main__":
     # default values
     # ============================================
     fname = input("Enter .xyz trajectory file path...\t")
+    TRJ = coor.TRJ(fname)
 
     npts = int(input("\nNumber of final points...\t"))
 
@@ -208,7 +209,9 @@ if __name__ == "__main__":
     
     if restart == "y":
         fname_output = 'restart.allxyz'
+    
     print('--output file: %s' % fname_output)
+    
 
     # ============================================
     # Perform interpolation
@@ -224,4 +227,18 @@ if __name__ == "__main__":
         WriteTraj(fname_output, ndim, npts, newR, E, symb3, restart)
     else:
         WriteTraj(fname_output, ndim, npts, newR, E, symb3)
+    
+    RP_SAVE = input("\nSave R/P files? [y/n]...\t")
+    if RP_SAVE == 'y':
+        with open("./R.xyz", 'a') as out:
+            out.write("{}\n".format(str(TRJ.natoms)))
+            out.write("Reactants\n")
+            for i in TRJ.trajectory[0]:
+                out.write("{} \t{:.10f}\t {:.10f}\t {:.10f} \n".format(i[0], i[1], i[2], i[3]))
+        with open("./P.xyz", 'a') as out:
+            out.write("{}\n".format(str(TRJ.natoms)))
+            out.write("Products\n")
+            for i in TRJ.trajectory[-1]:
+                out.write("{} \t{:.10f}\t {:.10f}\t {:.10f} \n".format(i[0], i[1], i[2], i[3]))
+
     print('Done.')

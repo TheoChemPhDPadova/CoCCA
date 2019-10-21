@@ -42,7 +42,8 @@ def data_manipulation():
     header()
     print("""
 1) Linear interpolation of a trajectory (GENERAL/ORCA)
-2) Trajectory Analyzer/Freezer (GENERAL)
+2) Trajectory Analyzer/Freezer          (GENERAL)
+3) Trajectory Pruning                   (GENERAL)
 
 b) Back to Main Menu
 q) Exit
@@ -52,6 +53,8 @@ q) Exit
         os.system("python3 " + sys.path[0] + "/trj_interp.py")
     elif choice == "2":
         os.system("python3 " + sys.path[0] + "/trj_anafrz.py")
+    elif choice == "3":
+        os.system("python3 " + sys.path[0] + "/trj_pruner.py")
     elif choice == "b":
         main()
     elif choice == "q":
@@ -62,7 +65,7 @@ def analysis():
     header()
     print("""
 1) Neighbor Finder (PDB)
-2) NEB Visualizer (ORCA)
+2) NEB Visualizer  (ORCA)
 
 b) Back to Main Menu
 q) Exit
@@ -81,7 +84,7 @@ def input_generation():
     """Input Generation menu"""
     header()
     print("""
-1) Constraints Generator (XYZ/GENERAL)
+1) Constraints Generator                         (XYZ/GENERAL)
 2) TRJ 2 Synchronous Transit-Guided Quasi-Newton (Gaussian)
 
 b) Back to Main Menu

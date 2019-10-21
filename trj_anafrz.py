@@ -45,7 +45,7 @@ print("LOW:\t\t{}".format(" ".join([str(i) for i in cat_d[1]])))
 print("MEDIUM:\t\t{}".format(" ".join([str(i) for i in cat_d[2]])))
 print("HIGH:\t\t{}".format(" ".join([str(i) for i in cat_d[3]])))
 
-FRZ_LIST = input("\nDo you want to CONSTRAIN some particular atom during?\n\n").split()
+FRZ_LIST = input("\nDo you want to CONSTRAIN some particular atom along the TRJ?\n\n").split()
 FRZ_LIST = [int(i) for i in FRZ_LIST]
 with open("./newTRAJ.xyz", 'a') as out:
     for idx_i, val_i in enumerate(TRJ.trajectory):
