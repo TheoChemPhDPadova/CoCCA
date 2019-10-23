@@ -44,6 +44,7 @@ def data_manipulation():
 1) Linear interpolation of a trajectory (GENERAL/ORCA)
 2) Trajectory Analyzer/Freezer          (GENERAL)
 3) Trajectory Pruning                   (GENERAL)
+4) PDB CatPocket Pruning Tool           (GENERAL/PDB)
 
 b) Back to Main Menu
 q) Exit
@@ -55,6 +56,8 @@ q) Exit
         os.system("python3 " + sys.path[0] + "/trj_anafrz.py")
     elif choice == "3":
         os.system("python3 " + sys.path[0] + "/trj_pruner.py")
+    elif choice == "4":
+        os.system("python3 " + sys.path[0] + "/prot_pruner.py")
     elif choice == "b":
         main()
     elif choice == "q":
