@@ -113,4 +113,4 @@ else:
     elif sys.argv[1].split(".")[-1] == "out":
         header()
         print("\nQUICK MODE: Detected .out file. Opening as fast as I can...")
-        os.system("python3 " + sys.path[0] + "/output_sum.py " + sys.argv[1])
+        os.system("python3 " + sys.path[0] + "/output_sum.py -i " + sys.argv[1])
