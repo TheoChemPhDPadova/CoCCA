@@ -3,6 +3,7 @@ import numpy as np
 
 def dist(atom_a, atom_b):
     """Calulate the distance between two atoms
+
     Args:
         atom_a (list): Cartesian coordinate of atom a [X, Y, Z]
         atom_b (list): Cartesian coordinate of atom b [X, Y, Z]
@@ -15,6 +16,7 @@ def dist(atom_a, atom_b):
 
 def ang(atom_a, atom_b, atom_c):
     """Calulate the angle given three atoms
+
     Args:
         atom_a (list): Cartesian coordinate of atom a [X, Y, Z]
         atom_b (list): Cartesian coordinate of atom b [X, Y, Z]
@@ -35,6 +37,7 @@ def ang(atom_a, atom_b, atom_c):
 
 def rot_mat(ang, vec):
     """Rotation Matrix
+
     Args:
         ang (float): Rotational angle in rad
         vec (list): Vector used as reference for the rotation
@@ -51,8 +54,32 @@ def rot_mat(ang, vec):
         [vecz*vecx*(1-np.cos(ang))-vecy*np.sin(ang), vecz*vecy*(1-np.cos(ang))+vecx*np.sin(ang), np.cos(ang)+(vecz**2)*(1-np.cos(ang))]
     ]
 
+def rot_mat_v(ref, tgt):
+    """Rotation Matrix from two arbitary vectors: R * ref = tgt
+
+    Args:
+        ref (list): Starting vector
+        tgt (list): Vector used as target
+
+    Returns:
+        list: Rotation Matrix
+    """
+    ref = np.array(ref) / np.linalg.norm(ref)
+    tgt = np.array(tgt) / np.linalg.norm(tgt)
+    dt = np.dot(ref, tgt)
+    cr = np.cross(ref, tgt)
+    v_mat = np.array(
+        [
+            [0.0, -cr[2], cr[1]],
+            [cr[2], 0.0, -cr[0]],
+            [-cr[1], cr[0], 0.0]
+        ]
+    )
+    return np.identity(3) + v_mat + (np.matmul(v_mat, v_mat)*(1/(1 + dt)))
+
 def ref_mat(vec):
     """Reflection Matrix
+
     Args:
         vec (list): Normal vector of the reflection plane
 

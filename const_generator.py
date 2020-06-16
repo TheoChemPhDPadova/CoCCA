@@ -1,5 +1,12 @@
 """Constrain Generator"""
-import molecule
+import coor, readline, glob
+
+def complete(text, state):
+    return (glob.glob(text+'*')+[None])[state]
+
+readline.set_completer_delims(' \t\n;')
+readline.parse_and_bind("tab: complete")
+readline.set_completer(complete)
 
 def multiple_parser(inp_list):
     """Multiple input parser"""
@@ -46,10 +53,11 @@ for i in multiple_parser(INPUT_INDEX):
 
 FREE_INDEX = list({int(i) for i in range(1, XMOL.natoms + 1)} - set(CONST_INDEX))
 
-SOFT = input("Select software:\n1)\tORCA\n2)\tGaussian\n3)\txTB\n")
+SOFT = input("\nSelect software:\n1)\tORCA\n2)\tGaussian\n3)\txTB\n")
 
 if SOFT == "1":
-    print("%GEOM")
+    print("\nFROZEN ATOMS:", " ".join([str(x - 1) for x in CONST_INDEX]))
+    print("\n%GEOM")
     print("  Constraints")
     for i in CONST_INDEX:
         print("    {C", i-1, "C}")
@@ -67,6 +75,7 @@ if SOFT == "1":
     print("END")
 
 elif SOFT == "2":
+    print("\nFROZEN ATOMS:", " ".join([str(x) for x in CONST_INDEX]))
     print("\nModredundant syntax is available below but it is suggested to use the classical frozen syntax (Atom 0/-1 X Y Z) at the end of this report:\n")
     for i in CONST_INDEX:
         print("X", i, "F")
@@ -80,7 +89,8 @@ elif SOFT == "2":
             print("ERROR!!! Something wrong just happened... :(")
 
 elif SOFT == "3":
-    XTB_OPT = input("Do you like to freeze atoms in hessian calculation? (All immaginary mode due to frozen atoms will be projected out) [y/n]\n")
+    print("\nFROZEN ATOMS:", " ".join([str(x) for x in CONST_INDEX]))
+    XTB_OPT = input("\nDo you like to freeze atoms in hessian calculation? (All immaginary mode due to frozen atoms will be projected out) [y/n]\n")
     print("\n$fix")
     for i in CONST_INDEX:
         print("atoms:", i)

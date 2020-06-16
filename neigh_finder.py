@@ -1,5 +1,13 @@
 """Neighbor finder module"""
+import coor, readline, glob
 import utilities as ut
+
+def complete(text, state):
+    return (glob.glob(text+'*')+[None])[state]
+
+readline.set_completer_delims(' \t\n;')
+readline.parse_and_bind("tab: complete")
+readline.set_completer(complete)
 
 print("""
 ================================================
