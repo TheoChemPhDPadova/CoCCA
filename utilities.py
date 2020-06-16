@@ -96,6 +96,33 @@ def ref_mat(vec):
     ]
 
 
+class TRJ:
+    """Loading XMol trajectory"""
+    def __init__(self, path):
+        try:
+            print("TRJ Loading...\t\t\t", end="", flush=True)
+            with open(path) as file:
+                lines = file.readlines()
+            print("Done!")
+            self.natoms = int(lines[0])
+            print("Atoms...\t\t\t{}".format(str(self.natoms)))
+            self.trajectory = []
+            xyz = []
+            snapsidx = [idx for idx, i in enumerate(lines) if i == lines[0]]
+            self.nspas = len(snapsidx)
+            print("Snapshots...\t\t\t{}".format(str(self.nspas)))
+
+            for i in snapsidx:
+                xyz = []
+                line = lines[i+2:i+2+self.natoms]
+                for j in line:
+                    xyz.append([str(j.split()[0]), float(j.split()[1]), float(j.split()[2]), float(j.split()[3])])
+                self.trajectory.append(xyz)
+
+        except FileNotFoundError as detail:
+            print("\n{}".format(detail))
+            quit()
+
 class PDB:
     """
     Loading PDB standard (Hierarchical Structure below)

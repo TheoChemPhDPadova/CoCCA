@@ -5,7 +5,7 @@ New number of images is given by the variable npts
 
 Thanks to original author: Vilhjalmur Asgeirsson (UI, 2018) - Script extended and adapted
 """
-import sys, readline, glob, os, coor
+import sys, readline, glob, os, utilities
 import numpy as np
 
 def complete(text, state):
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     # default values
     # ============================================
     fname = input("Enter .xyz trajectory file path...\t")
-    TRJ = coor.TRJ(fname)
+    TRJ = utilities.TRJ(fname)
 
     npts = int(input("\nNumber of final points...\t"))
 

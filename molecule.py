@@ -185,6 +185,7 @@ class MOL:
             quit()
         self.name = path.split("/")[-1].split(".xyz")[-2]
         print("Molecule name:\t\t\t" + str(self.name))
+    
     def mass(self):
         """Returns the mass of the molecule in u.m.a."""
         m = 0

@@ -1,5 +1,5 @@
 """Constrain Generator"""
-import coor, readline, glob
+import molecule, readline, glob
 
 def complete(text, state):
     return (glob.glob(text+'*')+[None])[state]

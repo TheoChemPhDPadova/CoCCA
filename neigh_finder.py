@@ -1,5 +1,5 @@
 """Neighbor finder module"""
-import coor, readline, glob
+import readline, glob
 import utilities as ut
 
 def complete(text, state):
