@@ -1,5 +1,5 @@
 """Neighbor finder module"""
-import coor, readline, glob
+import readline, glob
 import utilities as ut
 
 def complete(text, state):
@@ -15,7 +15,7 @@ print("""
 ================================================
 """)
 FILENAME = input("Enter .pdb file path...\t\t")
-PRT = coor.PDB(FILENAME).prot
+PRT = ut.PDB(FILENAME).prot
 SEL_CHAIN = input("Select chain...\t\t\t")
 SEL_RSN = input("Select residue...\t\t")
 print("\nDetected Atom Type in", SEL_RSN, PRT[SEL_CHAIN][SEL_RSN][0][2], ":\n")

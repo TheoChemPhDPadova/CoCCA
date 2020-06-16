@@ -1,5 +1,5 @@
 """Trajectory Analyzer/Freezer"""
-import coor, readline, glob
+import utilities, readline, glob
 import numpy as np
 
 def complete(text, state):
@@ -17,7 +17,7 @@ print("""
 
 cat_d = [[], [], [], []]
 
-TRJ = coor.TRJ(input("Enter trajectory file path...\t"))
+TRJ = utilities.TRJ(input("Enter trajectory file path...\t"))
 print("\nATOM\tELEM\tSTD\t\tSTATUS\n")
 for i in range(0, TRJ.natoms):
     tmp = []

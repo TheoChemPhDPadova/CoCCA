@@ -1,5 +1,5 @@
 """Constrain Generator"""
-import coor, readline, glob
+import molecule, readline, glob
 
 def complete(text, state):
     return (glob.glob(text+'*')+[None])[state]
@@ -29,7 +29,7 @@ print("""
 """)
 
 FILENAME = input("Enter .xyz file path...\t\t")
-XMOL = coor.XYZ(FILENAME)
+XMOL = molecule.MOL(FILENAME)
 INPUT_INDEX = input("\nEnter the element(s) to constrain.\nMultiple elements constraints are possible (e.g.: C O).\nDifferent elements must be separated by a SPACE.\nSpecial tokens are allowed (e.g.: All)\n\nSelection\n").split()
 CONST_INDEX = []
 

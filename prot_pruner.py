@@ -1,5 +1,5 @@
 """PDB CatPocket Pruning Tool"""
-import itertools, coor, readline, glob, utilities
+import itertools, utilities, readline, glob, utilities
 import numpy as np
 
 def complete(text, state):
@@ -70,7 +70,7 @@ print("""
 """)
 
 filename = input('Enter .PDB file name...\t\t')
-PRO = coor.PDB(filename)
+PRO = utilities.PDB(filename)
 SelC = input('Select chain/s...\t\t')
 SelRSN = multiple_parser(input('Select residues...\t\t').split())
 SelRSN.sort()

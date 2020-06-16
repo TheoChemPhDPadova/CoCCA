@@ -1,6 +1,6 @@
 """Generate a QST2/QST3 input from a trajectory file"""
 
-import coor, readline, glob
+import utilities, readline, glob
 
 def complete(text, state):
     return (glob.glob(text+'*')+[None])[state]
@@ -15,7 +15,7 @@ print("""
 ================================================\n
 """)
 
-TRAJ = coor.TRJ(input("Enter trajectory file path...\t"))
+TRAJ = utilities.TRJ(input("Enter trajectory file path...\t"))
 R_SNAP = int(input("\nSnapshot number before TS...\t")) - 1
 TS_SNAP = input("Snapshot number of TS guess...\t")
 if TS_SNAP == "":
