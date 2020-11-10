@@ -1,5 +1,30 @@
 """Collectio of useful functions"""
+from os import system, name 
 import numpy as np
+
+def clear(): 
+    """System independent clear screen
+    """
+    if name == 'nt': 
+        _ = system('cls') 
+    else: 
+        _ = system('clear') 
+
+def header(VER):
+    """Logo
+    """
+    clear()
+    print("""
+================================================
+         __
+   ///  /  )   _____       _____  _____   ___  
+  |@  \/   )  /  __ \     /  __ \/  __ \ / _ \     
+ < (  (____)  | /  \/ ___ | /  \/| /  \// /_\ \\
+   \      )   | |    / _ \| |    | |    |  _  |
+    \____/    | \__/\ (_) | \__/\| \__/\| | | |
+    __||__     \____/\___/ \____/ \____/\_| |_/
+    
+======================================== Mk. {}""".format(VER))
 
 def dist(atom_a, atom_b):
     """Calulate the distance between two atoms

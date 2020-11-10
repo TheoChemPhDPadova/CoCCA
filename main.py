@@ -1,25 +1,12 @@
 """Menu Interface"""
-import os, sys
+import utils, sys, os
+import trj_interp
 import molecule as mol
 
-def header():
-    """Logo"""
-    os.system("clear")
-    print("""
-================================================
-         __
-   ///  /  )   _____       _____  _____   ___  
-  |@  \/   )  /  __ \     /  __ \/  __ \ / _ \     
- < (  (____)  | /  \/ ___ | /  \/| /  \// /_\ \\
-   \      )   | |    / _ \| |    | |    |  _  |
-    \____/    | \__/\ (_) | \__/\| \__/\| | | |
-    __||__     \____/\___/ \____/ \____/\_| |_/
-    
-================================================""")
+__VERSION__ = '1.0'
 
 def main():
-    """MainMenu"""
-    header()
+    utils.header(__VERSION__)
     print("""
 1) Data Manipulation
 2) Structure Analysis
@@ -43,7 +30,7 @@ q) Exit
 
 def data_manipulation():
     """Data Manipulation menu"""
-    header()
+    utils.header(__VERSION__)
     print("""
 1) Linear interpolation of a trajectory (GENERAL/ORCA)
 2) Trajectory Analyzer/Freezer          (GENERAL)
@@ -55,7 +42,7 @@ q) Exit
     """)
     choice = input("\nSelection:\t")
     if choice == "1":
-        os.system("python3 " + sys.path[0] + "/trj_interp.py")
+        trj_interp()
     elif choice == "2":
         os.system("python3 " + sys.path[0] + "/trj_anafrz.py")
     elif choice == "3":
@@ -69,7 +56,7 @@ q) Exit
 
 def analysis():
     """Structure Analysis menu"""
-    header()
+    utils.header(__VERSION__)
     print("""
 1) Neighbor Finder (PDB)
 2) NEB Visualizer  (ORCA)
@@ -89,7 +76,7 @@ q) Exit
 
 def input_generation():
     """Input Generation menu"""
-    header()
+    utils.header(__VERSION__)
     print("""
 1) Constraints Generator                         (XYZ/GENERAL)
 2) TRJ 2 Synchronous Transit-Guided Quasi-Newton (Gaussian)
@@ -124,7 +111,7 @@ def molecule_interface():
         for i, myclass in enumerate(MOL_LIST):
             print(str(i+1) + "\t" + myclass.name)
 
-    header()
+    utils.header(__VERSION__)
     print("""
 1) Load molecule from .xyz file
 2) Load vibrational data from .hess file (ORCA)
@@ -252,7 +239,7 @@ MOL_LIST = []
 if len(sys.argv) == 1:
     main()
 else:
-    header()
+    header(__VERSION__)
     if sys.argv[1].split(".")[-1] == "interp":
         print("\nQUICK MODE: Detected .interp file. Opening as fast as I can...")
         os.system("python3 " + sys.path[0] + "/neb_visualizer.py -i " + sys.argv[1])
@@ -271,3 +258,6 @@ else:
         print("Loading DONE. " + str(len(MOL_LIST)) + " files loaded succesfully")
         input("\nPress enter to continue ...   ")
         main()
+
+if __name__ == "__main__":
+    main()
