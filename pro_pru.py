@@ -62,7 +62,7 @@ def main():
 
     filename = input('Enter .PDB file name...\t\t')
     PRO = utils.PDB(filename)
-    SelC = input('Select chain/s...\t\t')
+    SelC = input('Select chain...\t\t')
     SelRSN = multiple_parser(input('Select residues...\t\t').split())
     SelRSN.sort()
 
@@ -114,7 +114,7 @@ def main():
                     elif ATOM[1] == 'CA':
                         CA_atom = ATOM
                         MOL.append("{} \t{:.3f}\t {:.3f}\t {:.3f}".format(ATOM[8], ATOM[5], ATOM[6], ATOM[7]))
-                        
+
                 H_Met = saturate(CA_atom[5:8], C_atom[5:8])
                 for i in H_Met:
                     MOL.append("{} \t{:.3f}\t {:.3f}\t {:.3f}".format(i[0], i[1], i[2], i[3]))

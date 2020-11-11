@@ -32,7 +32,7 @@ def header(VER):
 
 
 def NT():
-    print("=== NORMAL TERMINATION")
+    print("\n=== NORMAL TERMINATION")
 
 
 def TITLE(tle):

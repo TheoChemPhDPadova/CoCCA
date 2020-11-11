@@ -1,4 +1,4 @@
-import constants
+import sys, constants
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -25,7 +25,7 @@ def molecule_compare(mol_1, mol_2, verbose=False):
     #Check if the arguments are MOL class istances
     if isinstance(mol_1, MOL) == False or isinstance(mol_2, MOL) == False:
         print(""""ERROR: The function "molecule_compare" can handle only MOL class type objects""")
-        quit()
+        sys.exit()
     #Check if the number of atoms in the two molecules are the same
     if mol_1.natoms != mol_2.natoms:
         if verbose==True: print("The two molecules have different number of atoms")
@@ -51,7 +51,7 @@ def rigid_linear_transit(mol_start, mol_end, steps, path):
     #Check if the molecules are isomers of the same molecule and if the atom ordering is the same
     if molecule_compare(mol_start, mol_end) == False:
         print("ERROR: The starting and final molecules passed to the rigid linear transit routine are different")
-        quit()
+        sys.exit()
     #Compute for each atom the distance between the start and end structure
     total_displacement = []
     for atom in range(0, mol_start.natoms):
@@ -99,7 +99,7 @@ def plot_ir_spectrum(molecule, *args, style="bar", resolution=0.1, path="", show
         print("""ERROR: Missing width parameter in function "plot_ir_spectrum" """)
     if isinstance(molecule, MOL) == False:
         print("""ERROR: The function "plot_ir_spectrum" can handle only MOL class type objects""")
-        quit()
+        sys.exit()
     #Extract the data of frequency and intensity for each band neglecting the zero frequency modes
     vibr_freq = []
     trans_int = []
@@ -120,7 +120,7 @@ def plot_ir_spectrum(molecule, *args, style="bar", resolution=0.1, path="", show
                     degeneracy.append(1)
     else:
         print("ERROR: The object " + str(molecule) + " has no IR spectrum data loaded")
-        quit()
+        sys.exit()
     if show==True:
         print("IR spectrum data [frequency (cm^-1), intensity (km/mol), degeneracy]")
         for i, element in enumerate(vibr_freq):
@@ -182,7 +182,7 @@ class MOL:
             print("Elements in molecule:\t\t{}".format(", ".join(set(self.element))))
         except FileNotFoundError as detail:
             print("\n{}".format(detail))
-            quit()
+            sys.exit()
         self.name = path.split("/")[-1].split(".xyz")[-2]
         print("Molecule name:\t\t\t" + str(self.name))
     
@@ -299,8 +299,8 @@ class MOL:
                 if verbose == True: print("WARNING: no infrared spectrum matrix found")
         except FileNotFoundError as detail:
             print("\n{}".format(detail))
-            quit()
-        
+            sys.exit()
+
     def get_normal_mode(self, k, style="xyz", coord_type="cartesian", verbose=True):
         '''
         Returns the kth-normal mode of vibration. The output style can be selected by setting the
@@ -312,7 +312,7 @@ class MOL:
         if hasattr(self, "normal_modes_matrix"):
             if k < 0 or k >= self.natoms*3:
                 if verbose == True: print("ERROR: Index of normal mode out of range")
-                quit()
+                sys.exit()
             column = [col[k] for col in self.normal_modes_matrix]   #Extract a column from the normal modes matrix
             if style == "linear":
                 if coord_type == "cartesian":
@@ -326,7 +326,7 @@ class MOL:
                     return mass_weighted_mode                                               #Return the mass weighted vector as a list
                 else:
                     if verbose == True: print("ERROR: The coordinate type " + str(coord_type) + " is not a supported one")
-                    quit()
+                    sys.exit()
             elif style == "xyz":
                 list_format = self.get_normal_mode(k, style="linear", coord_type=coord_type, verbose=verbose)    #Call the linear module
                 #Reshape the list as a list of lists as [x, y, z]
@@ -339,7 +339,7 @@ class MOL:
                 return xyz_format
             else:
                 if verbose == True: print("ERROR: The style " + str(style) + " is not available")
-            quit()
+            sys.exit()
         else:
             if verbose == True: print("ERROR: no normal modes matrix found")
-            quit()
+            sys.exit()

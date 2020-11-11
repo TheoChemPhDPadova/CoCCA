@@ -1,6 +1,15 @@
 """Constrain Generator"""
-import sys, os
+import sys, os, glob, readline
 import molecule, utils
+
+
+def complete(text, state):
+    return (glob.glob(text + '*') + [None])[state]
+
+
+readline.set_completer_delims(' \t\n;')
+readline.parse_and_bind("tab: complete")
+readline.set_completer(complete)
 
 
 def main():
@@ -91,6 +100,7 @@ def main():
         print("end")
 
     utils.NT()
+    sys.exit(0)
 
 
 if __name__ == "__main__":
