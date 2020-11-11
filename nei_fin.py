@@ -35,15 +35,22 @@ def main():
     NEG_AA = ["ASP", "GLU"]
 
     while True:
-        THR_DIST = float(input("Select cutoff distance...\t"))
-        print("\n\nResID\tDIST\tAA\tCHARGE\n")
-        for i in DIST_TGT:
-            if DIST_TGT[i] <= THR_DIST and PRT[SEL_CHAIN][i][0][2] in POS_AA:
-                print("{}\t{:.3f}\t{}\t+1".format(i, DIST_TGT[i], PRT[SEL_CHAIN][i][0][2]))
-            elif DIST_TGT[i] <= THR_DIST and PRT[SEL_CHAIN][i][0][2] in NEG_AA:
-                print("{}\t{:.3f}\t{}\t-1".format(i, DIST_TGT[i], PRT[SEL_CHAIN][i][0][2]))
-            elif DIST_TGT[i] <= THR_DIST:
-                print("{}\t{:.3f}\t{}".format(i, DIST_TGT[i], PRT[SEL_CHAIN][i][0][2]))
+        try:
+            THR_DIST = float(input("Select cutoff distance...\t"))
+            print("\n\nResID\tDIST\tAA\tCHARGE\n")
+            for i in DIST_TGT:
+                if DIST_TGT[i] <= THR_DIST and PRT[SEL_CHAIN][i][0][2] in POS_AA:
+                    print("{}\t{:.3f}\t{}\t+1".format(i, DIST_TGT[i], PRT[SEL_CHAIN][i][0][2]))
+                elif DIST_TGT[i] <= THR_DIST and PRT[SEL_CHAIN][i][0][2] in NEG_AA:
+                    print("{}\t{:.3f}\t{}\t-1".format(i, DIST_TGT[i], PRT[SEL_CHAIN][i][0][2]))
+                elif DIST_TGT[i] <= THR_DIST:
+                    print("{}\t{:.3f}\t{}".format(i, DIST_TGT[i], PRT[SEL_CHAIN][i][0][2]))
+        except KeyboardInterrupt:
+            print("Interrupted by user")
+            try:
+                sys.exit(0)
+            except SystemExit:
+                os._exit(0)
 
 
 if __name__ == "__main__":

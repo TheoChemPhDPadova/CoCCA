@@ -10,9 +10,9 @@ __VERSION__ = '1.0'
 def main():
     utils.header(__VERSION__)
     print("""
-1) Data Manipulation
-2) Structure Analysis
-3) Input Generation
+1) Trajectory Manipulation
+2) PDB Tools
+3) Others
 4) Molecular properties and vibrations
 
 q) Exit
@@ -32,13 +32,13 @@ q) Exit
 
 
 def data_manipulation():
-    """Data Manipulation menu"""
+    """Trajectory Manipulation"""
     utils.header(__VERSION__)
     print("""
-1) Linear interpolation of a trajectory (GENERAL/ORCA)
-2) Trajectory Analyzer/Freezer          (GENERAL)
-3) Trajectory Pruning                   (GENERAL)
-4) PDB CatPocket Pruning Tool           (GENERAL/PDB)
+1) Resizer                      (TRJ/GENERAL/ORCA)
+2) Analyzer/Freezer             (TRJ/GENERAL)
+3) Slicer                       (TRJ/GENERAL)
+4) TRJ 2 QST2/QST3              (TRJ/Gaussian)
 
 b) Back to Main Menu
 q) Exit
@@ -51,7 +51,7 @@ q) Exit
     elif choice == "3":
         trj_pru.main()
     elif choice == "4":
-        pro_pru.main()
+        trj_qst.main()
     elif choice == "b":
         main()
     elif choice == "q":
@@ -59,11 +59,11 @@ q) Exit
 
 
 def analysis():
-    """Structure Analysis menu"""
+    """PDB Tools menu"""
     utils.header(__VERSION__)
     print("""
-1) Neighbor Finder (PDB)
-2) NEB Visualizer  (ORCA)
+1) Neighbor Finder              (PDB)
+2) Catalytic Pocket Selector    (PDB)
 
 b) Back to Main Menu
 q) Exit
@@ -72,7 +72,7 @@ q) Exit
     if choice == "1":
         nei_fin.main()
     elif choice == "2":
-        neb_vis.main()
+        pro_pru.main()
     elif choice == "b":
         main()
     elif choice == "q":
@@ -80,11 +80,10 @@ q) Exit
 
 
 def input_generation():
-    """Input Generation menu"""
+    """Others menu"""
     utils.header(__VERSION__)
     print("""
-1) Constraints Generator                         (XYZ/GENERAL)
-2) TRJ 2 Synchronous Transit-Guided Quasi-Newton (Gaussian)
+1) Constraints Generator              (XYZ/GENERAL)
 
 b) Back to Main Menu
 q) Exit
@@ -92,8 +91,6 @@ q) Exit
     choice = input("\nSelection:\t")
     if choice == "1":
         con_gen.main()
-    elif choice == "2":
-        trj_qst.main()
     elif choice == "b":
         main()
     elif choice == "q":
