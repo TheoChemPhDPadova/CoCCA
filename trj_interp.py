@@ -4,17 +4,10 @@ include more/less images by linear interpolation.
 New number of images is given by the variable npts
 Thanks to original author: Vilhjalmur Asgeirsson (UI, 2018) - Script extended and adapted
 """
-import sys, glob, os, utils, readline
+import sys, glob, os, utils
 import numpy as np
 
 def main():
-    def complete(text, state):
-        return (glob.glob(text+'*')+[None])[state]
-
-    readline.set_completer_delims(' \t\n;')
-    readline.parse_and_bind("tab: complete")
-    readline.set_completer(complete)
-
     def Displacement(ndim, nim, R):
 
         """
@@ -157,91 +150,88 @@ def main():
 
         return RPATH, ndim, nim, symb3
 
+    print("""
+================================================
+    Linear interpolation of a trajectory
+================================================
+""")
 
-    if __name__ == "__main__":
+    # ============================================
+    # default values
+    # ============================================
+    fname = input("Enter .xyz trajectory file path...\t")
+    TRJ = utils.TRJ(fname)
 
-        print("""
-    ================================================
-        Linear interpolation of a trajectory
-    ================================================
-    """)
+    npts = int(input("\nNumber of final points...\t"))
 
-        # ============================================
-        # default values
-        # ============================================
-        fname = input("Enter .xyz trajectory file path...\t")
-        TRJ = utils.TRJ(fname)
+    # ============================================
+    # Get inp arguments
+    # ============================================
 
-        npts = int(input("\nNumber of final points...\t"))
+    # Notice that the order of the arguments matters.
+    for i in range(len(sys.argv)):
+        if i == 1:
+            fname = sys.argv[1]
+        if i == 2:
+            try:
+                npts = int(sys.argv[2])
+            except:
+                raise TypeError("Int. expected as a second arg")
 
-        # ============================================
-        # Get inp arguments
-        # ============================================
+    file_extension = fname.split('.')[1]
+    # ============================================
+    # Read trajectory file
+    # ============================================
+    name_string = fname.split('.')
+    basename = name_string[0]
+    file_extension = name_string[1]
 
-        # Notice that the order of the arguments matters.
-        for i in range(len(sys.argv)):
-            if i == 1:
-                fname = sys.argv[1]
-            if i == 2:
-                try:
-                    npts = int(sys.argv[2])
-                except:
-                    raise TypeError("Int. expected as a second arg")
+    R, ndim, nim, symb3 = ReadTraj(fname)
+    print('--Found %i images with %i atoms' %  (nim, ndim/3))
+    print('--Interpolating to %i points' % (npts))
+    restart = input("\nSave as a ORCA Restart file? [y/n]...\t")
+    if npts > nim:
+        fname_output = basename+'_exte.'+file_extension
+    elif npts == nim:
+        fname_output = basename+'_redistri.'+file_extension
+    else:
+        fname_output = basename+'_reduc.'+file_extension
+    
+    if restart == "y":
+        fname_output = 'restart.allxyz'
+    
+    print('--output file: %s' % fname_output)
+    
 
-        file_extension = fname.split('.')[1]
-        # ============================================
-        # Read trajectory file
-        # ============================================
-        name_string = fname.split('.')
-        basename = name_string[0]
-        file_extension = name_string[1]
+    # ============================================
+    # Perform interpolation
+    # ============================================
+    S = Displacement(ndim, nim, R)
+    newR = GenerateNewPath(ndim, nim, npts, S, R)
+    
+    # ============================================
+    # Write new trajectory file
+    # ============================================
+    E = np.zeros(shape=(npts,1))
+    if restart == "y":
+        WriteTraj(fname_output, ndim, npts, newR, E, symb3, restart)
+    else:
+        WriteTraj(fname_output, ndim, npts, newR, E, symb3)
+    
+    RP_SAVE = input("\nSave R/P files? [y/n]...\t")
+    if RP_SAVE == 'y':
+        with open("./R.xyz", 'a') as out:
+            out.write("{}\n".format(str(TRJ.natoms)))
+            out.write("Reactants\n")
+            for i in TRJ.trajectory[0]:
+                out.write("{} \t{:.10f}\t {:.10f}\t {:.10f} \n".format(i[0], i[1], i[2], i[3]))
+        with open("./P.xyz", 'a') as out:
+            out.write("{}\n".format(str(TRJ.natoms)))
+            out.write("Products\n")
+            for i in TRJ.trajectory[-1]:
+                out.write("{} \t{:.10f}\t {:.10f}\t {:.10f} \n".format(i[0], i[1], i[2], i[3]))
 
-        R, ndim, nim, symb3 = ReadTraj(fname)
-        print('--Found %i images with %i atoms' %  (nim, ndim/3))
-        print('--Interpolating to %i points' % (npts))
-        restart = input("\nSave as a ORCA Restart file? [y/n]...\t")
-        if npts > nim:
-            fname_output = basename+'_exte.'+file_extension
-        elif npts == nim:
-            fname_output = basename+'_redistri.'+file_extension
-        else:
-            fname_output = basename+'_reduc.'+file_extension
-        
-        if restart == "y":
-            fname_output = 'restart.allxyz'
-        
-        print('--output file: %s' % fname_output)
-        
-
-        # ============================================
-        # Perform interpolation
-        # ============================================
-        S = Displacement(ndim, nim, R)
-        newR = GenerateNewPath(ndim, nim, npts, S, R)
-        
-        # ============================================
-        # Write new trajectory file
-        # ============================================
-        E = np.zeros(shape=(npts,1))
-        if restart == "y":
-            WriteTraj(fname_output, ndim, npts, newR, E, symb3, restart)
-        else:
-            WriteTraj(fname_output, ndim, npts, newR, E, symb3)
-        
-        RP_SAVE = input("\nSave R/P files? [y/n]...\t")
-        if RP_SAVE == 'y':
-            with open("./R.xyz", 'a') as out:
-                out.write("{}\n".format(str(TRJ.natoms)))
-                out.write("Reactants\n")
-                for i in TRJ.trajectory[0]:
-                    out.write("{} \t{:.10f}\t {:.10f}\t {:.10f} \n".format(i[0], i[1], i[2], i[3]))
-            with open("./P.xyz", 'a') as out:
-                out.write("{}\n".format(str(TRJ.natoms)))
-                out.write("Products\n")
-                for i in TRJ.trajectory[-1]:
-                    out.write("{} \t{:.10f}\t {:.10f}\t {:.10f} \n".format(i[0], i[1], i[2], i[3]))
-
-        print('Done.')
+    print('Done.')
 
 if __name__ == "__main__":
     main()
