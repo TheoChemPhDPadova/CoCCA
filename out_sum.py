@@ -81,12 +81,13 @@ def main(path):
     plt.title('Displacement RMS')
     plt.xlim(0, len(src.ene)-1)
 
-    plt.subplot(337)
-    plt.plot(src.eigen[0], marker=".", markersize=7, lw=1)
-    plt.plot(src.eigen[1], marker=".", markersize=7, lw=1)
-    plt.plot(src.eigen[2], marker=".", markersize=7, lw=1)
-    plt.plot(src.eigen[3], marker=".", markersize=7, lw=1)
-    plt.plot(src.eigen[4], marker=".", markersize=7, lw=1)
+    if src.eigen != []:
+        plt.subplot(337)
+        plt.plot(src.eigen[0], marker=".", markersize=7, lw=1)
+        plt.plot(src.eigen[1], marker=".", markersize=7, lw=1)
+        plt.plot(src.eigen[2], marker=".", markersize=7, lw=1)
+        plt.plot(src.eigen[3], marker=".", markersize=7, lw=1)
+        plt.plot(src.eigen[4], marker=".", markersize=7, lw=1)
 
     plt.axhline(y=0, color='black', linestyle='--', lw=1)
     plt.title('Hessian Eigenvector')
