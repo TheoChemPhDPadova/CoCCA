@@ -1,6 +1,7 @@
 """Trajectory Pruner"""
-import utils, glob
-import numpy as np
+import sys, os
+import utils
+
 
 def main():
     def multiple_parser(inp_list):
@@ -8,19 +9,15 @@ def main():
         out_list = []
         for k in inp_list:
             if "-" in k:
-                for l in range(int(k.split("-")[0]), int(k.split("-")[1]) + 1):
-                    if int(l) not in out_list:
-                        out_list.append(int(l))
+                for li in range(int(k.split("-")[0]), int(k.split("-")[1]) + 1):
+                    if int(li) not in out_list:
+                        out_list.append(int(li))
             else:
                 if int(k) not in out_list:
                     out_list.append(int(k))
         return out_list
 
-    print("""
-    ================================================
-                Trajectory Pruning
-    ================================================\n
-    """)
+    utils.TITLE("Trajectory Pruning")
 
     TRJ = utils.TRJ(input("Enter trajectory file path...\t"))
     K_LIST = multiple_parser(input("\nSnapshot numbers to extract?\t").split())
@@ -33,12 +30,15 @@ def main():
                 for j in val_i:
                     out.write("{} \t{:.10f}\t {:.10f}\t {:.10f} \n".format(j[0], j[1], j[2], j[3]))
 
-    print("""
+    utils.NT()
 
-    ================================================
-                NORMAL TERMINATION    
-    ================================================
-    """)
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("Interrupted by user")
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)

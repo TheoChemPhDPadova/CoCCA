@@ -1,6 +1,8 @@
 """PDB CatPocket Pruning Tool"""
-import itertools, utils, glob
+import sys, os
+import itertools, utils
 import numpy as np
+
 
 def main():
     def multiple_parser(inp_list):
@@ -8,9 +10,9 @@ def main():
         out_list = []
         for k in inp_list:
             if "-" in k:
-                for l in range(int(k.split('-')[0]), int(k.split('-')[1]) + 1):
-                    if int(l) not in out_list:
-                        out_list.append(int(l))
+                for li in range(int(k.split('-')[0]), int(k.split('-')[1]) + 1):
+                    if int(li) not in out_list:
+                        out_list.append(int(li))
             else:
                 if int(k) not in out_list:
                     out_list.append(int(k))
@@ -21,7 +23,7 @@ def main():
         Collapses a list of integers into a list of the start and end of
         consecutive runs of numbers. Returns a generator of generators.
         """
-        for w, z in itertools.groupby(L, lambda x, y=itertools.count(): next(y)-x):
+        for w, z in itertools.groupby(L, lambda x, y=itertools.count(): next(y) - x):
             grouped = list(z)
             yield (x for x in [grouped[0], grouped[-1]][:len(grouped)])
 
@@ -56,12 +58,7 @@ def main():
 
         return H_end
 
-
-    print("""
-    ================================================
-            PDB CatPocket Pruning Tool
-    ================================================
-    """)
+    utils.TITLE("PDB CatPocket Pruning Tool")
 
     filename = input('Enter .PDB file name...\t\t')
     PRO = utils.PDB(filename)
@@ -72,7 +69,7 @@ def main():
     GrpRSN = [list(x) for x in group_ranges(SelRSN)]
 
     print('\nNumber of groups detected...\t{}'.format(len(GrpRSN)))
-    print('Number of terminations...\t{}'.format(2*len(GrpRSN)))
+    print('Number of terminations...\t{}'.format(2 * len(GrpRSN)))
 
     for idx, val in enumerate(GrpRSN):
         print('\n>> Group:\t{}'.format(str(idx + 1)))
@@ -140,14 +137,16 @@ def main():
             out.write(i + '\n')
         out.close()
 
-    print("""
+    print("\nPruned structure has been saven in: {}\n".format(filename + '.' + SelC + '.pruned.xyz'))
+    utils.NT()
 
-    Pruned structure has been saven in: {}
-
-    ================================================
-                NORMAL TERMINATION    
-    ================================================
-    """.format(filename + '.' + SelC + '.pruned.xyz'))
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("Interrupted by user")
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)

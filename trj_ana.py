@@ -1,14 +1,11 @@
 """Trajectory Analyzer/Freezer"""
-import utils, glob
+import sys, os
+import utils
 import numpy as np
 
+
 def main():
-    print('   {}   '.format('CIAO'.center(20, '#')))
-    print("""
-    ================================================
-            Trajectory Analyzer/Freezer
-    ================================================\n
-    """)
+    utils.TITLE("Trajectory Analyzer/Freezer")
 
     cat_d = [[], [], [], []]
 
@@ -62,12 +59,15 @@ def main():
                         val_j[3]
                     ))
 
-    print("""
+    utils.NT()
 
-    ================================================
-                NORMAL TERMINATION    
-    ================================================
-    """)
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("Interrupted by user")
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)

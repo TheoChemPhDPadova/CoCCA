@@ -1,5 +1,7 @@
 """Constrain Generator"""
-import molecule, glob
+import sys, os
+import molecule, utils
+
 
 def main():
     def multiple_parser(inp_list):
@@ -7,19 +9,15 @@ def main():
         out_list = []
         for k in inp_list:
             if "-" in k:
-                for l in range(int(k.split("-")[0]), int(k.split("-")[1]) + 1):
-                    if int(l) not in out_list:
-                        out_list.append(int(l))
+                for li in range(int(k.split("-")[0]), int(k.split("-")[1]) + 1):
+                    if int(li) not in out_list:
+                        out_list.append(int(li))
             else:
                 if int(k) not in out_list:
                     out_list.append(int(k))
         return out_list
 
-    print("""
-    ================================================
-                Constrain Generator   
-    ================================================\n
-    """)
+    utils.TITLE("CONSTRAINTS GENERATOR")
 
     FILENAME = input("Enter .xyz file path...\t\t")
     XMOL = molecule.MOL(FILENAME)
@@ -53,7 +51,7 @@ def main():
         print("\n%GEOM")
         print("  Constraints")
         for i in CONST_INDEX:
-            print("    {C", i-1, "C}")
+            print("    {C", i - 1, "C}")
         print("  End")
         print("END")
         CONST_INDEX[:] = [x - 1 for x in CONST_INDEX]
@@ -74,9 +72,9 @@ def main():
             print("X", i, "F")
         print("\nTo project-out the immaginary frequencies due to frozen atoms in a vibrational analysis change the coordinates using the frozen syntax (Atom 0/-1 X Y Z):\n")
         for idx, val in enumerate(XMOL.element):
-            if idx+1 in FREE_INDEX:
+            if idx + 1 in FREE_INDEX:
                 print("{}   {} \t{:.10f}\t {:.10f}\t {:.10f}".format(val, "0", XMOL.xyz[idx][0], XMOL.xyz[idx][1], XMOL.xyz[idx][2]))
-            elif idx+1 in CONST_INDEX:
+            elif idx + 1 in CONST_INDEX:
                 print("{}  {} \t{:.10f}\t {:.10f}\t {:.10f}".format(val, "-1", XMOL.xyz[idx][0], XMOL.xyz[idx][1], XMOL.xyz[idx][2]))
             else:
                 print("ERROR!!! Something wrong just happened... :(")
@@ -92,12 +90,15 @@ def main():
                 print("freeze:", i)
         print("end")
 
-    print("""
+    utils.NT()
 
-    ================================================
-                NORMAL TERMINATION    
-    ================================================
-    """)
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("Interrupted by user")
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)

@@ -1,14 +1,18 @@
-"""Collectio of useful functions"""
-from os import system, name 
-import numpy as np
+"""Collection of useful functions"""
 
-def clear(): 
+from os import system, name
+import numpy as np
+import sys
+
+
+def clear():
     """System independent clear screen
     """
-    if name == 'nt': 
-        _ = system('cls') 
-    else: 
-        _ = system('clear') 
+    if name == 'nt':
+        _ = system('cls')
+    else:
+        _ = system('clear')
+
 
 def header(VER):
     """Logo
@@ -23,8 +27,17 @@ def header(VER):
    \      )   | |    / _ \| |    | |    |  _  |
     \____/    | \__/\ (_) | \__/\| \__/\| | | |
     __||__     \____/\___/ \____/ \____/\_| |_/
-    
+
 ======================================== Mk. {}""".format(VER))
+
+
+def NT():
+    print("=== NORMAL TERMINATION")
+
+
+def TITLE(tle):
+    print("\n=== {}\n".format(tle))
+
 
 def dist(atom_a, atom_b):
     """Calulate the distance between two atoms
@@ -38,6 +51,7 @@ def dist(atom_a, atom_b):
     atom_a = np.array(atom_a)
     atom_b = np.array(atom_b)
     return np.linalg.norm(atom_a - atom_b)
+
 
 def ang(atom_a, atom_b, atom_c):
     """Calulate the angle given three atoms
@@ -60,6 +74,7 @@ def ang(atom_a, atom_b, atom_c):
     )
     return rad_angle
 
+
 def rot_mat(ang, vec):
     """Rotation Matrix
 
@@ -73,11 +88,19 @@ def rot_mat(ang, vec):
     vecx = vec[0]
     vecy = vec[1]
     vecz = vec[2]
+
     return [
-        [np.cos(ang)+(vecx**2)*(1-np.cos(ang)), vecx*vecy*(1-np.cos(ang))-vecz*np.sin(ang), vecx*vecz*(1-np.cos(ang))+vecy*np.sin(ang)],
-        [vecy*vecx*(1-np.cos(ang))+vecz*np.sin(ang), np.cos(ang)+(vecy**2)*(1-np.cos(ang)), vecy*vecz*(1-np.cos(ang))-vecx*np.sin(ang)],
-        [vecz*vecx*(1-np.cos(ang))-vecy*np.sin(ang), vecz*vecy*(1-np.cos(ang))+vecx*np.sin(ang), np.cos(ang)+(vecz**2)*(1-np.cos(ang))]
+        [np.cos(ang)+(vecx**2)*(1-np.cos(ang)),
+         vecx*vecy*(1-np.cos(ang))-vecz*np.sin(ang),
+         vecx*vecz*(1-np.cos(ang))+vecy*np.sin(ang)],
+        [vecy*vecx*(1-np.cos(ang))+vecz*np.sin(ang),
+         np.cos(ang)+(vecy**2)*(1-np.cos(ang)),
+         vecy*vecz*(1-np.cos(ang))-vecx*np.sin(ang)],
+        [vecz*vecx*(1-np.cos(ang))-vecy*np.sin(ang),
+         vecz*vecy*(1-np.cos(ang))+vecx*np.sin(ang),
+         np.cos(ang)+(vecz**2)*(1-np.cos(ang))]
     ]
+
 
 def rot_mat_v(ref, tgt):
     """Rotation Matrix from two arbitary vectors: R * ref = tgt
@@ -101,6 +124,7 @@ def rot_mat_v(ref, tgt):
         ]
     )
     return np.identity(3) + v_mat + (np.matmul(v_mat, v_mat)*(1/(1 + dt)))
+
 
 def ref_mat(vec):
     """Reflection Matrix
@@ -139,14 +163,15 @@ class TRJ:
 
             for i in snapsidx:
                 xyz = []
-                line = lines[i+2:i+2+self.natoms]
+                line = lines[i + 2:i + 2 + self.natoms]
                 for j in line:
                     xyz.append([str(j.split()[0]), float(j.split()[1]), float(j.split()[2]), float(j.split()[3])])
                 self.trajectory.append(xyz)
 
         except FileNotFoundError as detail:
             print("\n{}".format(detail))
-            quit()
+            sys.exit()
+
 
 class PDB:
     """
@@ -201,4 +226,4 @@ class PDB:
             print("Chains...\t\t\t{} ({})".format(len(self.prot), "/".join([*self.prot])))
         except FileNotFoundError as detail:
             print("\n{}".format(detail))
-            quit()
+            sys.exit()

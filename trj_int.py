@@ -1,15 +1,16 @@
 """
-Script to extend a trajectory from ORCA NEB run/General TRJ file to redistribute or 
-include more/less images by linear interpolation. 
+Script to extend a trajectory from ORCA NEB run/General TRJ file to redistribute or
+include more/less images by linear interpolation.
 New number of images is given by the variable npts
 Thanks to original author: Vilhjalmur Asgeirsson (UI, 2018) - Script extended and adapted
 """
-import sys, glob, os, utils
+import sys, os
+import utils
 import numpy as np
+
 
 def main():
     def Displacement(ndim, nim, R):
-
         """
         Computes straight line distances between adjacent pair of images
         and then sums up the distances
@@ -18,13 +19,12 @@ def main():
         for i in range(1, nim):
             R0 = R[(i - 1) * ndim:(i) * ndim]
             R1 = R[(i) * ndim:(i + 1) * ndim]
-            dR = R1-R0
-            displ[i] = displ[i - 1] + np.sqrt(np.dot(dR.T,dR))
+            dR = R1 - R0
+            displ[i] = displ[i - 1] + np.sqrt(np.dot(dR.T, dR))
 
         return displ
 
     def LinearInterpolateData(nlen, xData, yData, xnew):
-
         """
         Linear interpolation of data points (xData, yData) to point xnew
         """
@@ -50,11 +50,10 @@ def main():
 
 
     def GenerateNewPath(ndim, nim, npoints, S, R):
-
         """
         Generates new path, newR of npoints images, from path R with nim images
         """
-        
+
         newR = np.zeros(shape=(ndim * npoints, 1))
         xi = np.linspace(S[0], S[-1], npoints)
 
@@ -75,27 +74,27 @@ def main():
             first_line = f.readline()
         return first_line
 
-    def WriteTraj(fname, ndim, nim, R, E, symb3, restart = "n"):
+    def WriteTraj(fname, ndim, nim, R, E, symb3, restart="n"):
 
         if len(symb3) != ndim:
             raise RuntimeError("Error in WriteTraj. Dimension mismatch: symb3")
         if len(E) != nim:
             raise RuntimeError("Error in WriteTraj. Dimension mismatch: E")
-        if len(R) != ndim*nim:
+        if len(R) != ndim * nim:
             raise RuntimeError("Error in WriteTraj. Dimension mismatch: R")
-        
+
         f = open(fname, 'w')
         natoms = ndim / 3
         for i in range(nim):
             hnit = R[i * ndim:(i + 1) * ndim]
-            f.write("%i \n" % natoms )
+            f.write("%i \n" % natoms)
             f.write('E=%12.8f \n' % E[i])
             for j in range(0, len(hnit), 3):
                 f.write('%s %12.8f %12.8f %12.8f\n' % (symb3[j].strip(), hnit[j], hnit[j + 1], hnit[j + 2]))
             if restart == "y" and i + 1 != nim:
                 f.write('>\n')
         f.close()
-        
+
         return None
 
     def ReadTraj(fname):
@@ -103,7 +102,7 @@ def main():
             raise RuntimeError("File %s not found " % fname)
 
         extension = fname.split('.')[-1]
-        
+
         # Get first line of the file (i.e. number of atoms)
         first_line = ReadFirstLineOfFile(fname)
 
@@ -111,7 +110,7 @@ def main():
             natoms = int(first_line)
         except:
             raise TypeError("%s is not correctly formatted trajectory file")
-        
+
         ndim = natoms * 3
 
         # begin by reading the contents of the file to a list
@@ -119,7 +118,7 @@ def main():
         f = open(fname).readlines()
         for i, line in enumerate(f):
             contents.append(line)
-        
+
         if ">\n" in contents:
             print('\n--ORCA Restart file detected!')
             contents = [i for i in contents if i != ">\n"]
@@ -150,11 +149,7 @@ def main():
 
         return RPATH, ndim, nim, symb3
 
-    print("""
-================================================
-    Linear interpolation of a trajectory
-================================================
-""")
+    utils.TITLE("Linear interpolation of a trajectory")
 
     # ============================================
     # default values
@@ -187,37 +182,37 @@ def main():
     file_extension = name_string[1]
 
     R, ndim, nim, symb3 = ReadTraj(fname)
-    print('--Found %i images with %i atoms' %  (nim, ndim/3))
+    print('--Found %i images with %i atoms' % (nim, ndim / 3))
     print('--Interpolating to %i points' % (npts))
     restart = input("\nSave as a ORCA Restart file? [y/n]...\t")
     if npts > nim:
-        fname_output = basename+'_exte.'+file_extension
+        fname_output = basename + '_exte.' + file_extension
     elif npts == nim:
-        fname_output = basename+'_redistri.'+file_extension
+        fname_output = basename + '_redistri.' + file_extension
     else:
-        fname_output = basename+'_reduc.'+file_extension
-    
+        fname_output = basename + '_reduc.' + file_extension
+
     if restart == "y":
         fname_output = 'restart.allxyz'
-    
+
     print('--output file: %s' % fname_output)
-    
+
 
     # ============================================
     # Perform interpolation
     # ============================================
     S = Displacement(ndim, nim, R)
     newR = GenerateNewPath(ndim, nim, npts, S, R)
-    
+
     # ============================================
     # Write new trajectory file
     # ============================================
-    E = np.zeros(shape=(npts,1))
+    E = np.zeros(shape=(npts, 1))
     if restart == "y":
         WriteTraj(fname_output, ndim, npts, newR, E, symb3, restart)
     else:
         WriteTraj(fname_output, ndim, npts, newR, E, symb3)
-    
+
     RP_SAVE = input("\nSave R/P files? [y/n]...\t")
     if RP_SAVE == 'y':
         with open("./R.xyz", 'a') as out:
@@ -231,7 +226,15 @@ def main():
             for i in TRJ.trajectory[-1]:
                 out.write("{} \t{:.10f}\t {:.10f}\t {:.10f} \n".format(i[0], i[1], i[2], i[3]))
 
-    print('Done.')
+    utils.NT()
+
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("Interrupted by user")
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)
