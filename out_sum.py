@@ -12,6 +12,8 @@ def main(path):
         src = QM_parser.AMS(path)
     elif 'O   R   C   A' in out:
         src = QM_parser.ORCA(path)
+    elif ' Gaussian 16,' in out:
+        src = QM_parser.G16(path)
     else:
         print('\nSorry, output file not supported!')
         sys.exit()
@@ -50,11 +52,12 @@ def main(path):
 
     plt.subplot(334)
     plt.plot(src.enechg, marker=".", markersize=7, lw=1)
-    plt.axhline(y=src.enelim, color='r', linestyle='-', lw=1.5)
-    if src.enechg[-1] < src.enelim:
-        plt.axhline(y=src.enelim, color='#3bd636', linestyle='-', lw=1.5)
-    else:
+    if src.enelim != '':
         plt.axhline(y=src.enelim, color='r', linestyle='-', lw=1.5)
+        if src.enechg[-1] < src.enelim:
+            plt.axhline(y=src.enelim, color='#3bd636', linestyle='-', lw=1.5)
+        else:
+            plt.axhline(y=src.enelim, color='r', linestyle='-', lw=1.5)
     plt.ylabel('Hartree')
     plt.title('|Energy Change|')
     plt.xlim(0, len(src.ene)-1)
