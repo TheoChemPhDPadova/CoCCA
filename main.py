@@ -144,7 +144,7 @@ q) Exit
         input("\nPress enter to return to the menu ...   ")
         molecule_interface()
     elif choice == "3":
-        os.system("clear")
+        utils.clear()
         print("================================================")
         print("               VIBRATIONAL SPECTRUM")
         print("================================================\n")
@@ -165,7 +165,7 @@ q) Exit
                 mol.plot_ir_spectrum(MOL_LIST[ID-1], style=type_of_plot, path=path, show=False)
         molecule_interface()
     elif choice == "4":
-        os.system("clear")
+        utils.clear()
         print("================================================")
         print("       MOLECULAR PROPERTIES COMPUTATION")
         print("================================================\n")
@@ -177,7 +177,7 @@ q) Exit
         """)
         calculation_choice = input("\nSelection:\t")
         if calculation_choice == "1":
-            os.system("clear")
+            utils.clear()
             print("================================================")
             print("               GENERAL PROPERTIES")
             print("================================================")
@@ -190,7 +190,7 @@ Select the ID of the molecules divided by comma
                 molecule_selection = list(range(0, len(MOL_LIST)))
             else:
                 molecule_selection = [int(i) for i in molecule_selection.split(",")]
-            os.system("clear")
+            utils.clear()
             print("================================================")
             print("               GENERAL PROPERTIES")
             print("================================================")
@@ -209,6 +209,14 @@ Select the ID of the molecules divided by comma
                 print("\tx:\t" + str(myMol.rcm()[0]))
                 print("\ty:\t" + str(myMol.rcm()[1]))
                 print("\tz:\t" + str(myMol.rcm()[2]))
+                print("\nMoment of Inertia (amu*Angstrom**2):")
+                inert = myMol.inertia_tensor()
+                print("\t{:.3e}\t{:.3e}\t{:.3e}".format(inert[0][0][0], inert[0][0][1], inert[0][0][2]))
+                print("\t{:.3e}\t{:.3e}\t{:.3e}".format(inert[0][1][0], inert[0][1][1], inert[0][1][2]))
+                print("\t{:.3e}\t{:.3e}\t{:.3e}".format(inert[0][2][0], inert[0][2][1], inert[0][2][2]))
+                print("\nEigenvalues:")
+                print("\t{:.3e}\t{:.3e}\t{:.3e}".format(inert[1][0], inert[1][1], inert[1][2]))
+                print("\nRotor type: {}".format(inert[2]))
             input("\nPress enter to return to the menu ...   ")
             molecule_interface()
         elif calculation_choice == "b":
@@ -216,7 +224,7 @@ Select the ID of the molecules divided by comma
         elif calculation_choice == "q":
             sys.exit()
     elif choice == "5":
-        os.system("clear")
+        utils.clear()
         print("================================================")
         print("              LINEAR TRANSIT MODULE")
         print("================================================")

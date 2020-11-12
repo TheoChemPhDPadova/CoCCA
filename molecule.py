@@ -2,6 +2,7 @@ import sys, utils
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 def write_xmol(elements, coordinates, path):
         """Saving to the "path" a XMol type file from a list of "elements" and their
         "coordinates" arranged as a list of lists ordered ad [[x1, y1, z1],[x2, y2, z2]...]"""
@@ -16,6 +17,7 @@ def write_xmol(elements, coordinates, path):
                 coordinates[idnx][1],
                 coordinates[idnx][2]
                 ))
+
 
 def molecule_compare(mol_1, mol_2, verbose=False):
     """
@@ -233,6 +235,37 @@ class MOL:
         if order == "number":
             comp.sort(key=lambda x: x[1], reverse=True)
         return comp
+
+    def inertia_tensor(self, toll=0.5):
+        """Returns the moment of inertia tensor and the rotor type"""
+        # Centering molecule on centroid
+        centroid = np.mean(self.xyz, axis=0)
+        xyz_cen = np.subtract(self.xyz, centroid)
+        mol = [[E, X[0], X[1], X[2]] for E in self.element for X in xyz_cen]
+        # Inertia tensor calculation
+        iner_tensor = [
+            [sum(utils.atomic_mass[i[0]]*(float(i[2])**2+float(i[3])**2) for i in mol), -sum(utils.atomic_mass[i[0]]*float(i[1])*float(i[2]) for i in mol), -sum(utils.atomic_mass[i[0]]*float(i[1])*float(i[3]) for i in mol)],
+            [-sum(utils.atomic_mass[i[0]]*float(i[1])*float(i[2]) for i in mol), sum(utils.atomic_mass[i[0]]*(float(i[1])**2+float(i[3])**2) for i in mol), -sum(utils.atomic_mass[i[0]]*float(i[3])*float(i[2]) for i in mol)],
+            [-sum(utils.atomic_mass[i[0]]*float(i[1])*float(i[3]) for i in mol), -sum(utils.atomic_mass[i[0]]*float(i[3])*float(i[2]) for i in mol), sum(utils.atomic_mass[i[0]]*(float(i[1])**2+float(i[2])**2) for i in mol)]
+        ]
+        # Tensor diagonalization and eigenvalues sorting for convenience (future implementations)
+        iner_eigval = sorted(np.linalg.eigvals(iner_tensor))
+        # Rotor type detection
+        if abs(iner_eigval[0] - iner_eigval[1]) < toll and abs(iner_eigval[1] - iner_eigval[2]) < toll:
+            rotor_type = 'Spherical Top'
+        elif abs(iner_eigval[0] - iner_eigval[1]) < toll and iner_eigval[1] < iner_eigval[2]:
+            rotor_type = 'Oblate Symmetric Top'
+        elif iner_eigval[0] < iner_eigval[1] and abs(iner_eigval[1] - iner_eigval[2]) < toll:
+            rotor_type = 'Prolate Symmetric Top'
+            if abs(0 - iner_eigval[0]) < toll and abs(iner_eigval[1] - iner_eigval[2]) < toll:
+                rotor_type = 'Prolate Symmetric Top - Linear Arrangement'
+        elif iner_eigval[0] < iner_eigval[1] and iner_eigval[1] < iner_eigval[2]:
+            rotor_type = 'Asymmetric Top'
+        else:
+            rotor_type = 'Error: rotor is not defined!!!'
+            sys.exit()
+
+        return iner_tensor, iner_eigval, rotor_type
 
     def load_hess_file(self, path, verbose=False):
         """
