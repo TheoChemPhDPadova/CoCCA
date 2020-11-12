@@ -1,4 +1,4 @@
-import sys, constants
+import sys, utils
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -19,7 +19,7 @@ def write_xmol(elements, coordinates, path):
 
 def molecule_compare(mol_1, mol_2, verbose=False):
     """
-    Return True if the two molecules are equal and the .xyz files have the same ordering. 
+    Return True if the two molecules are equal and the .xyz files have the same ordering.
     If a verbose output is required the flag "verbose=True" can be set
     """
     #Check if the arguments are MOL class istances
@@ -68,7 +68,7 @@ def rigid_linear_transit(mol_start, mol_end, steps, path):
             for coord in range(0, 3):
                 new_coord_line.append(mol_start.xyz[atom][coord] + total_displacement[atom][coord]*step/(steps + 1))
             new_coord.append(new_coord_line)
-        write_xmol(mol_start.element, new_coord, new_path)        
+        write_xmol(mol_start.element, new_coord, new_path)
 
 
 def plot_ir_spectrum(molecule, *args, style="bar", resolution=0.1, path="", show=True):
@@ -80,9 +80,9 @@ def plot_ir_spectrum(molecule, *args, style="bar", resolution=0.1, path="", show
     with lorentzian broadening. If "gaussian" is selected the sigma of the gaussian in cm^-1 must
     be passed as an additiona argument. The same is true in the case of "lorentzian" in which the
     linewidth in cm^-1 must be passed as an additiona argument. The resolution of the plot is set,
-    in cm^-1 units, by the flag resolution. By default the resolution in 0.1cm^-1. The flag 
-    path="" allow the selection of the directory in which the spectrum must be saved, if nothing 
-    is set as path no file will be saved. The flag show allow to activate (True) or deactivate 
+    in cm^-1 units, by the flag resolution. By default the resolution in 0.1cm^-1. The flag
+    path="" allow the selection of the directory in which the spectrum must be saved, if nothing
+    is set as path no file will be saved. The flag show allow to activate (True) or deactivate
     (False) the graphical output.
     """
     #Define the Gaussian and Lorentziam function of unitary height for x=x0
@@ -185,21 +185,21 @@ class MOL:
             sys.exit()
         self.name = path.split("/")[-1].split(".xyz")[-2]
         print("Molecule name:\t\t\t" + str(self.name))
-    
+
     def mass(self):
         """Returns the mass of the molecule in u.m.a."""
         m = 0
         for atom in self.element:
-            m += constants.atomic_mass[atom]
+            m += utils.atomic_mass[atom]
         return m
-    
+
     def rcm(self):
         """Returns the position of the center of mass of the molecule"""
         r = []
         for col in range(0, 3):
             var = 0
             for row in range(0, self.natoms):
-                var += constants.atomic_mass[self.element[row]]*self.xyz[row][col]
+                var += utils.atomic_mass[self.element[row]]*self.xyz[row][col]
             r.append(var/self.mass())
         return r
 
@@ -210,7 +210,7 @@ class MOL:
             if atom_name == atom:
                 n += 1
         return n
-    
+
     def composition(self, order="mass"):
         """
         Returns the composition of the molecule as a list of lists of type [element, number, %mass].
@@ -219,21 +219,21 @@ class MOL:
         comp = []
         #Create a list of atoms divided by element with the relative number of them in the molecule
         for atom in self.element:
-            known_atoms = [i[0] for i in comp] 
+            known_atoms = [i[0] for i in comp]
             if atom in known_atoms:
                 comp[known_atoms.index(atom)][1] += 1
             else:
                 comp.append([atom, 1, 0])
         #Complete the last column with the percentual in mass of each element
         for atom in comp:
-            atom[2] = 100.*atom[1]*constants.atomic_mass[atom[0]]/self.mass()
+            atom[2] = 100.*atom[1]*utils.atomic_mass[atom[0]]/self.mass()
         #Order the elements by abbundance in mass
         comp.sort(key=lambda x: x[2], reverse=True)
         #If selected order the elements by number
         if order == "number":
-            comp.sort(key=lambda x: x[1], reverse=True) 
+            comp.sort(key=lambda x: x[1], reverse=True)
         return comp
-    
+
     def load_hess_file(self, path, verbose=False):
         """
         The function loads into the MOL class object the data conteined into the .hess file
@@ -321,7 +321,7 @@ class MOL:
                     mass_weighted_mode = []
                     for index, value in enumerate(column):
                         atom = int((index-index%3)/3)                                       #Compute the index of the atom
-                        mass_factor = np.sqrt(constants.atomic_mass[self.element[atom]])    #Compute the mass correction factor
+                        mass_factor = np.sqrt(utils.atomic_mass[self.element[atom]])    #Compute the mass correction factor
                         mass_weighted_mode.append(mass_factor*value)                        #Compute the value of the component in mass weighted coordiantes
                     return mass_weighted_mode                                               #Return the mass weighted vector as a list
                 else:

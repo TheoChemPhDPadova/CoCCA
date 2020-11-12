@@ -2,7 +2,6 @@
 import sys, os
 import argparse, utils
 import matplotlib.pyplot as plt
-import constants as k
 
 
 def main(ARGS):
@@ -35,29 +34,29 @@ def main(ARGS):
     for i in idx_pts:
         if i == idx_pts[0]:
             x = [float(lines[j].split()[0]) for j in range(i, i+pts_n)]
-            y = [float(lines[j].split()[2])*k.ha2kcal for j in range(i, i+pts_n)]
+            y = [float(lines[j].split()[2])*utils.ha2kcal for j in range(i, i+pts_n)]
             plt.scatter(x, y, s=15, c="orange")
         elif i == idx_pts[-1]:
             x = [float(lines[j].split()[0]) for j in range(i, i+pts_n)]
-            y = [float(lines[j].split()[2])*k.ha2kcal for j in range(i, i+pts_n)]
+            y = [float(lines[j].split()[2])*utils.ha2kcal for j in range(i, i+pts_n)]
             plt.scatter(x, y, s=15, c="cornflowerblue", zorder=10)
         else:
             x = [float(lines[j].split()[0]) for j in range(i, i+pts_n)]
-            y = [float(lines[j].split()[2])*k.ha2kcal for j in range(i, i+pts_n)]
+            y = [float(lines[j].split()[2])*utils.ha2kcal for j in range(i, i+pts_n)]
             plt.scatter(x, y, s=7, c="gainsboro")
 
     for i in idx_int:
         if i == idx_int[0]:
             x = [float(lines[j].split()[0]) for j in range(i, i+int_n)]
-            y = [float(lines[j].split()[2])*k.ha2kcal for j in range(i, i+int_n)]
+            y = [float(lines[j].split()[2])*utils.ha2kcal for j in range(i, i+int_n)]
             plt.plot(x, y, c="orange")
         elif i == idx_int[-1]:
             x = [float(lines[j].split()[0]) for j in range(i, i+int_n)]
-            y = [float(lines[j].split()[2])*k.ha2kcal for j in range(i, i+int_n)]
+            y = [float(lines[j].split()[2])*utils.ha2kcal for j in range(i, i+int_n)]
             plt.plot(x, y, c="cornflowerblue", zorder=10)
         else:
             x = [float(lines[j].split()[0]) for j in range(i, i+int_n)]
-            y = [float(lines[j].split()[2])*k.ha2kcal for j in range(i, i+int_n)]
+            y = [float(lines[j].split()[2])*utils.ha2kcal for j in range(i, i+int_n)]
             plt.plot(x, y, c="gainsboro")
 
     plt.xlim(0, 1)
