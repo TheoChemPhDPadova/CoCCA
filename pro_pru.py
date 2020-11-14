@@ -4,7 +4,7 @@ import itertools, utils
 import numpy as np
 
 
-def main():
+def main(FILENAME='', CHN='', RES=''):
     def multiple_parser(inp_list):
         """Multiple input parser"""
         out_list = []
@@ -58,14 +58,20 @@ def main():
 
         return H_end
 
-    utils.TITLE("PDB CatPocket Pruning Tool")
+    utils.TITLE("Catalytic Pocket Selector")
 
-    filename = input('Enter .PDB file name...\t\t')
-    PRO = utils.PDB(filename)
-    SelC = input('Select chain...\t\t')
-    SelRSN = multiple_parser(input('Select residues...\t\t').split())
+    if FILENAME == '':
+        filename = input('Enter .PDB file name...\t\t')
+        PRO = utils.PDB(filename)
+        SelC = input('Select chain...\t\t')
+        SelRSN = multiple_parser(input('Select residues...\t\t').split())
+    else:
+        filename = FILENAME
+        PRO = utils.PDB(filename)
+        SelC = CHN
+        SelRSN = multiple_parser(RES)
+
     SelRSN.sort()
-
     GrpRSN = [list(x) for x in group_ranges(SelRSN)]
 
     print('\nNumber of groups detected...\t{}'.format(len(GrpRSN)))
@@ -128,7 +134,6 @@ def main():
                 for ATOM in PRO.prot[SelC][str(AA + 1)]:
                     if ATOM[1] == 'N':
                         MOL.append("{} \t{:.3f}\t {:.3f}\t {:.3f}".format(Mk_Atom, ATOM[5], ATOM[6], ATOM[7]))
-
 
     with open(filename + '.' + SelC + '.pruned.xyz', 'w') as out:
         out.write(str(len(MOL)) + '\n')

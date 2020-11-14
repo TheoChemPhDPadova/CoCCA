@@ -33,6 +33,7 @@ def header(VER):
 
 def NT():
     print("\n=== NORMAL TERMINATION")
+    sys.exit()
 
 
 def TITLE(tle):

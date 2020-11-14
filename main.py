@@ -62,7 +62,7 @@ def analysis():
     """PDB Tools menu"""
     utils.header(__VERSION__)
     print("""
-1) Neighbor Finder              (PDB)
+1) Proximity Analysis           (PDB)
 2) Catalytic Pocket Selector    (PDB)
 
 b) Back to Main Menu

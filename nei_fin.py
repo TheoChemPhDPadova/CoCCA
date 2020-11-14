@@ -1,10 +1,13 @@
-"""Neighbor finder module"""
+"""Proximity Analysis module"""
 import sys, os
-import utils
+import utils, pro_pru
+
+POS_AA = ["ARG", "HIS", "LYS"]
+NEG_AA = ["ASP", "GLU"]
 
 
 def main():
-    utils.TITLE("Neighbor Finder")
+    utils.TITLE("Proximity Analysis")
 
     FILENAME = input("Enter .pdb file path...\t\t")
     PRT = utils.PDB(FILENAME).prot
@@ -14,7 +17,7 @@ def main():
     for i in PRT[SEL_CHAIN][SEL_RSN]:
         print(">> ", i[1])
 
-    SEL_AT = input("\nSelect Atom Type:\t")
+    SEL_AT = input("\nSelect Atom Type:\t\t")
 
     TGT = [i for i in PRT[SEL_CHAIN][SEL_RSN] if i[1] == SEL_AT][0]
 
@@ -31,26 +34,32 @@ def main():
             else:
                 print("ERROR!")
 
-    POS_AA = ["ARG", "HIS", "LYS"]
-    NEG_AA = ["ASP", "GLU"]
+    RES = []
+    try:
+        THR_DIST = float(input("Select cutoff distance...\t"))
 
-    while True:
+        for i in DIST_TGT:
+            if DIST_TGT[i] <= THR_DIST and PRT[SEL_CHAIN][i][0][2] in POS_AA:
+                RES.append(i)
+                print("{}\t{:.3f}\t{}\t+1".format(i, DIST_TGT[i], PRT[SEL_CHAIN][i][0][2]))
+            elif DIST_TGT[i] <= THR_DIST and PRT[SEL_CHAIN][i][0][2] in NEG_AA:
+                RES.append(i)
+                print("{}\t{:.3f}\t{}\t-1".format(i, DIST_TGT[i], PRT[SEL_CHAIN][i][0][2]))
+            elif DIST_TGT[i] <= THR_DIST:
+                RES.append(i)
+                print("{}\t{:.3f}\t{}".format(i, DIST_TGT[i], PRT[SEL_CHAIN][i][0][2]))
+    except KeyboardInterrupt:
+        print("Interrupted by user")
         try:
-            THR_DIST = float(input("Select cutoff distance...\t"))
-            print("\n\nResID\tDIST\tAA\tCHARGE\n")
-            for i in DIST_TGT:
-                if DIST_TGT[i] <= THR_DIST and PRT[SEL_CHAIN][i][0][2] in POS_AA:
-                    print("{}\t{:.3f}\t{}\t+1".format(i, DIST_TGT[i], PRT[SEL_CHAIN][i][0][2]))
-                elif DIST_TGT[i] <= THR_DIST and PRT[SEL_CHAIN][i][0][2] in NEG_AA:
-                    print("{}\t{:.3f}\t{}\t-1".format(i, DIST_TGT[i], PRT[SEL_CHAIN][i][0][2]))
-                elif DIST_TGT[i] <= THR_DIST:
-                    print("{}\t{:.3f}\t{}".format(i, DIST_TGT[i], PRT[SEL_CHAIN][i][0][2]))
-        except KeyboardInterrupt:
-            print("Interrupted by user")
-            try:
-                sys.exit(0)
-            except SystemExit:
-                os._exit(0)
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)
+
+    cps = input("\nPass the selected residues to the Catalytic Pocket Selector module? [y/n]:\t")
+    if cps == 'y':
+        pro_pru.main(FILENAME, SEL_CHAIN, RES)
+    else:
+        utils.NT()
 
 
 if __name__ == "__main__":

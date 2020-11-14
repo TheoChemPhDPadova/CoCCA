@@ -35,20 +35,25 @@ alias cocca="python3 PATH-TO-COCCA/main.py"
 This tool allows you to extend or reduce a trajectory by increasing or decreasing the number of images in it using a linear interpolation approach.
 
 #### **Analyzer/Freezer**
-Trajectory analysis detects the displacement magnitude of every atom: this provides an easy way to understand which atoms are frozen along the trajectory (backbone) and which ones are the key fragments for the considered reaction. This tool also allows you to constrain specific atoms and create a new trajectory useful for a constrained NEB analysis.
+Trajectory analysis detects the displacement magnitude of every atom : this provides an easy way to understand which atoms are frozen along the trajectory (e.g. backbone atoms) and which ones are the key fragments for the considered reaction. This tool also allows you to constrain specific atoms and create a new trajectory useful for a constrained NEB analysis.
 
 #### **Slicer**
-This tool helps you to cut a trajectory formed by several structures into a smaller number of images/snapshots.
+This tool helps you to cut a trajectory formed by several structures into a smaller one with a limited number of images/snapshots.
 
 #### **TRJ 2 QST2/QST3**
 Useful tool to select two structures (from a trajectory) just before and after the transition state: an input file for a Synchronous Transit-Guided Quasi-Newton calculation (QST2) for Gaussian will be created. If a guess of the transition state is also selected, the calculation automatically turns into a QST3.
 ### PDB Tools
 ---
-#### **Neighbor Finder**
-Useful only for .pdb analysis or large molecules inspection. Search what is nearby a selected amino acid or residue in a spherical region. The distance threshold for the search must be in ångström. The charge of the amino acids is calculated at physiologic pH.
+#### **Proximity Analysis**
+Useful for .pdb analysis or large molecules inspection. Search what is nearby a selected amino acid, residue or atom in a spherical region. The distance threshold for the search is in ångström. The charge of the amino acids is calculated at physiologic pH.
 
 #### **Catalytic Pocket Selector**
 TBD
+
+### Molecular properties and vibrations
+---
+#### **Linear transit**
+
 
 ### Others
 ---
