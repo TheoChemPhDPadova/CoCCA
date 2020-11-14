@@ -1,29 +1,18 @@
 """Menu Interface"""
-import os, sys
+import sys, os
+import utils, trj_int, trj_ana, trj_pru, trj_qst, pro_pru, con_gen
+import neb_vis, nei_fin, out_sum
 import molecule as mol
 
-def header():
-    """Logo"""
-    os.system("clear")
-    print("""
-================================================
-         __
-   ///  /  )   _____       _____  _____   ___  
-  |@  \/   )  /  __ \     /  __ \/  __ \ / _ \     
- < (  (____)  | /  \/ ___ | /  \/| /  \// /_\ \\
-   \      )   | |    / _ \| |    | |    |  _  |
-    \____/    | \__/\ (_) | \__/\| \__/\| | | |
-    __||__     \____/\___/ \____/ \____/\_| |_/
-    
-================================================""")
+__VERSION__ = '1.0'
+
 
 def main():
-    """MainMenu"""
-    header()
+    utils.header(__VERSION__)
     print("""
-1) Data Manipulation
-2) Structure Analysis
-3) Input Generation
+1) Trajectory Manipulation
+2) PDB Tools
+3) Others
 4) Molecular properties and vibrations
 
 q) Exit
@@ -39,73 +28,74 @@ q) Exit
     elif choice == "4":
         molecule_interface()
     elif choice == "q":
-        quit()
+        sys.exit()
+
 
 def data_manipulation():
-    """Data Manipulation menu"""
-    header()
+    """Trajectory Manipulation"""
+    utils.header(__VERSION__)
     print("""
-1) Linear interpolation of a trajectory (GENERAL/ORCA)
-2) Trajectory Analyzer/Freezer          (GENERAL)
-3) Trajectory Pruning                   (GENERAL)
-4) PDB CatPocket Pruning Tool           (GENERAL/PDB)
+1) Resizer                                              (TRJ/GENERAL/ORCA)
+2) Analyzer/Freezer                                     (TRJ/GENERAL)
+3) Slicer                                               (TRJ/GENERAL)
+4) TRJ 2 Synchronous Transit-Guided Quasi-Newton        (TRJ/Gaussian)
 
 b) Back to Main Menu
 q) Exit
     """)
     choice = input("\nSelection:\t")
     if choice == "1":
-        os.system("python3 " + sys.path[0] + "/trj_interp.py")
+        trj_int.main()
     elif choice == "2":
-        os.system("python3 " + sys.path[0] + "/trj_anafrz.py")
+        trj_ana.main()
     elif choice == "3":
-        os.system("python3 " + sys.path[0] + "/trj_pruner.py")
+        trj_pru.main()
     elif choice == "4":
-        os.system("python3 " + sys.path[0] + "/prot_pruner.py")
+        trj_qst.main()
     elif choice == "b":
         main()
     elif choice == "q":
-        quit()
+        sys.exit()
+
 
 def analysis():
-    """Structure Analysis menu"""
-    header()
+    """PDB Tools menu"""
+    utils.header(__VERSION__)
     print("""
-1) Neighbor Finder (PDB)
-2) NEB Visualizer  (ORCA)
+1) Proximity Analysis           (PDB)
+2) Catalytic Pocket Selector    (PDB)
 
 b) Back to Main Menu
 q) Exit
     """)
     choice = input("\nSelection:\t")
     if choice == "1":
-        os.system("python3 " + sys.path[0] + "/neigh_finder.py")
+        nei_fin.main()
     elif choice == "2":
-        os.system("python3 " + sys.path[0] + "/neb_visualizer.py")
+        pro_pru.main()
     elif choice == "b":
         main()
     elif choice == "q":
-        quit()
+        sys.exit()
+
 
 def input_generation():
-    """Input Generation menu"""
-    header()
+    """Others menu"""
+    utils.header(__VERSION__)
     print("""
-1) Constraints Generator                         (XYZ/GENERAL)
-2) TRJ 2 Synchronous Transit-Guided Quasi-Newton (Gaussian)
+1) Constraints Generator              (XYZ/GENERAL)
 
 b) Back to Main Menu
 q) Exit
     """)
     choice = input("\nSelection:\t")
     if choice == "1":
-        os.system("python3 " + sys.path[0] + "/const_generator.py")
-    elif choice == "2":
-        os.system("python3 " + sys.path[0] + "/trj2qst.py")
+        con_gen.main()
     elif choice == "b":
         main()
     elif choice == "q":
-        quit()
+        sys.exit()
+
 
 def molecule_interface():
     """Molecule class menu"""
@@ -116,7 +106,7 @@ def molecule_interface():
             molecule_interface()
         print("Selected ID: " + str(ID) + "\tMolecule name: " + str(MOL_LIST[ID-1].name) + "\n")
         return ID
-        
+
     def list_molecules():
         print("\n            LIST OF LOADED MOLECULES")
         print("------------------------------------------------\n")
@@ -124,7 +114,7 @@ def molecule_interface():
         for i, myclass in enumerate(MOL_LIST):
             print(str(i+1) + "\t" + myclass.name)
 
-    header()
+    utils.header(__VERSION__)
     print("""
 1) Load molecule from .xyz file
 2) Load vibrational data from .hess file (ORCA)
@@ -139,21 +129,21 @@ q) Exit
     """)
     choice = input("\nSelection:\t")
     if choice == "1":
-        header()
+        utils.header(__VERSION__)
         path = input("\nSelect the path of the .xyz file:\t")
         MOL_LIST.append(mol.MOL(path))
         print("\nMolecule saved with the ID:\t" + str(len(MOL_LIST))) 
         input("\nPress enter to return to the menu ...   ")
         molecule_interface()
     elif choice == "2":
-        header()
+        utils.header(__VERSION__)
         path = input("\nSelect the path of the .hess file:\t")
         ID = ask_ID()
         MOL_LIST[ID-1].load_hess_file(path, verbose=True)
         input("\nPress enter to return to the menu ...   ")
         molecule_interface()
     elif choice == "3":
-        os.system("clear")
+        utils.clear()
         print("================================================")
         print("               VIBRATIONAL SPECTRUM")
         print("================================================\n")
@@ -174,7 +164,7 @@ q) Exit
                 mol.plot_ir_spectrum(MOL_LIST[ID-1], style=type_of_plot, path=path, show=False)
         molecule_interface()
     elif choice == "4":
-        os.system("clear")
+        utils.clear()
         print("================================================")
         print("       MOLECULAR PROPERTIES COMPUTATION")
         print("================================================\n")
@@ -186,7 +176,7 @@ q) Exit
         """)
         calculation_choice = input("\nSelection:\t")
         if calculation_choice == "1":
-            os.system("clear")
+            utils.clear()
             print("================================================")
             print("               GENERAL PROPERTIES")
             print("================================================")
@@ -199,7 +189,7 @@ Select the ID of the molecules divided by comma
                 molecule_selection = list(range(0, len(MOL_LIST)))
             else:
                 molecule_selection = [int(i) for i in molecule_selection.split(",")]
-            os.system("clear")
+            utils.clear()
             print("================================================")
             print("               GENERAL PROPERTIES")
             print("================================================")
@@ -218,14 +208,22 @@ Select the ID of the molecules divided by comma
                 print("\tx:\t" + str(myMol.rcm()[0]))
                 print("\ty:\t" + str(myMol.rcm()[1]))
                 print("\tz:\t" + str(myMol.rcm()[2]))
+                print("\nMoment of Inertia (amu*Angstrom**2):")
+                inert = myMol.inertia_tensor()
+                print("\t{:.3e}\t{:.3e}\t{:.3e}".format(inert[0][0][0], inert[0][0][1], inert[0][0][2]))
+                print("\t{:.3e}\t{:.3e}\t{:.3e}".format(inert[0][1][0], inert[0][1][1], inert[0][1][2]))
+                print("\t{:.3e}\t{:.3e}\t{:.3e}".format(inert[0][2][0], inert[0][2][1], inert[0][2][2]))
+                print("\nEigenvalues:")
+                print("\t{:.3e}\t{:.3e}\t{:.3e}".format(inert[1][0], inert[1][1], inert[1][2]))
+                print("\nRotor type: {}".format(inert[2]))
             input("\nPress enter to return to the menu ...   ")
             molecule_interface()
         elif calculation_choice == "b":
             molecule_interface()
         elif calculation_choice == "q":
-            quit()
+            sys.exit()
     elif choice == "5":
-        os.system("clear")
+        utils.clear()
         print("================================================")
         print("              LINEAR TRANSIT MODULE")
         print("================================================")
@@ -238,36 +236,47 @@ Select the ID of the molecules divided by comma
         mol.rigid_linear_transit(MOL_LIST[ID_start-1], MOL_LIST[ID_end-1], n_steps, path)
         molecule_interface()
     elif choice == "l":
-        header()
+        utils.header(__VERSION__)
         list_molecules()
         input("\nPress enter to return to the menu ...   ")
         molecule_interface()
     elif choice == "b":
         main()
     elif choice == "q":
-        quit()
+        sys.exit()
+
 
 MOL_LIST = []
 
 if len(sys.argv) == 1:
     main()
 else:
-    header()
+    utils.header(__VERSION__)
     if sys.argv[1].split(".")[-1] == "interp":
-        print("\nQUICK MODE: Detected .interp file. Opening as fast as I can...")
-        os.system("python3 " + sys.path[0] + "/neb_visualizer.py -i " + sys.argv[1])
+        print("\nQUICK MODE:\tDetected .interp file. Opening as fast as I can...")
+        neb_vis.main(sys.argv[1])
     elif sys.argv[1].split(".")[-1] == "out":
-        header()
-        print("\nQUICK MODE: Detected .out file. Opening as fast as I can...")
-        os.system("python3 " + sys.path[0] + "/output_sum.py " + sys.argv[1])
+        print("\nQUICK MODE:\tDetected .out file. Opening as fast as I can...")
+        out_sum.main(sys.argv[1])
     elif sys.argv[1] == "load":
-        print("\nQUICK MODE: Detected load instruction.\nLoading .xyz files...")
+        print("\nQUICK MODE:\tDetected load instruction.\nLoading .xyz files...")
         print("------------------------------------------------")
         for i, argument in enumerate(sys.argv):
-            if i>1 and argument.split(".")[-1] == "xyz":
+            if i > 1 and argument.split(".")[-1] == "xyz":
                 MOL_LIST.append(mol.MOL(argument))
                 print("Molecule saved with the ID:\t" + str(len(MOL_LIST)))
         print("------------------------------------------------")
         print("Loading DONE. " + str(len(MOL_LIST)) + " files loaded succesfully")
         input("\nPress enter to continue ...   ")
         main()
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("Interrupted by user")
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)

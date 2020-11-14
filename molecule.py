@@ -1,6 +1,7 @@
-import constants
+import sys, utils
 import numpy as np
 import matplotlib.pyplot as plt
+
 
 def write_xmol(elements, coordinates, path):
         """Saving to the "path" a XMol type file from a list of "elements" and their
@@ -17,15 +18,16 @@ def write_xmol(elements, coordinates, path):
                 coordinates[idnx][2]
                 ))
 
+
 def molecule_compare(mol_1, mol_2, verbose=False):
     """
-    Return True if the two molecules are equal and the .xyz files have the same ordering. 
+    Return True if the two molecules are equal and the .xyz files have the same ordering.
     If a verbose output is required the flag "verbose=True" can be set
     """
     #Check if the arguments are MOL class istances
     if isinstance(mol_1, MOL) == False or isinstance(mol_2, MOL) == False:
         print(""""ERROR: The function "molecule_compare" can handle only MOL class type objects""")
-        quit()
+        sys.exit()
     #Check if the number of atoms in the two molecules are the same
     if mol_1.natoms != mol_2.natoms:
         if verbose==True: print("The two molecules have different number of atoms")
@@ -51,7 +53,7 @@ def rigid_linear_transit(mol_start, mol_end, steps, path):
     #Check if the molecules are isomers of the same molecule and if the atom ordering is the same
     if molecule_compare(mol_start, mol_end) == False:
         print("ERROR: The starting and final molecules passed to the rigid linear transit routine are different")
-        quit()
+        sys.exit()
     #Compute for each atom the distance between the start and end structure
     total_displacement = []
     for atom in range(0, mol_start.natoms):
@@ -68,7 +70,7 @@ def rigid_linear_transit(mol_start, mol_end, steps, path):
             for coord in range(0, 3):
                 new_coord_line.append(mol_start.xyz[atom][coord] + total_displacement[atom][coord]*step/(steps + 1))
             new_coord.append(new_coord_line)
-        write_xmol(mol_start.element, new_coord, new_path)        
+        write_xmol(mol_start.element, new_coord, new_path)
 
 
 def plot_ir_spectrum(molecule, *args, style="bar", resolution=0.1, path="", show=True):
@@ -80,9 +82,9 @@ def plot_ir_spectrum(molecule, *args, style="bar", resolution=0.1, path="", show
     with lorentzian broadening. If "gaussian" is selected the sigma of the gaussian in cm^-1 must
     be passed as an additiona argument. The same is true in the case of "lorentzian" in which the
     linewidth in cm^-1 must be passed as an additiona argument. The resolution of the plot is set,
-    in cm^-1 units, by the flag resolution. By default the resolution in 0.1cm^-1. The flag 
-    path="" allow the selection of the directory in which the spectrum must be saved, if nothing 
-    is set as path no file will be saved. The flag show allow to activate (True) or deactivate 
+    in cm^-1 units, by the flag resolution. By default the resolution in 0.1cm^-1. The flag
+    path="" allow the selection of the directory in which the spectrum must be saved, if nothing
+    is set as path no file will be saved. The flag show allow to activate (True) or deactivate
     (False) the graphical output.
     """
     #Define the Gaussian and Lorentziam function of unitary height for x=x0
@@ -99,7 +101,7 @@ def plot_ir_spectrum(molecule, *args, style="bar", resolution=0.1, path="", show
         print("""ERROR: Missing width parameter in function "plot_ir_spectrum" """)
     if isinstance(molecule, MOL) == False:
         print("""ERROR: The function "plot_ir_spectrum" can handle only MOL class type objects""")
-        quit()
+        sys.exit()
     #Extract the data of frequency and intensity for each band neglecting the zero frequency modes
     vibr_freq = []
     trans_int = []
@@ -120,7 +122,7 @@ def plot_ir_spectrum(molecule, *args, style="bar", resolution=0.1, path="", show
                     degeneracy.append(1)
     else:
         print("ERROR: The object " + str(molecule) + " has no IR spectrum data loaded")
-        quit()
+        sys.exit()
     if show==True:
         print("IR spectrum data [frequency (cm^-1), intensity (km/mol), degeneracy]")
         for i, element in enumerate(vibr_freq):
@@ -182,24 +184,24 @@ class MOL:
             print("Elements in molecule:\t\t{}".format(", ".join(set(self.element))))
         except FileNotFoundError as detail:
             print("\n{}".format(detail))
-            quit()
+            sys.exit()
         self.name = path.split("/")[-1].split(".xyz")[-2]
         print("Molecule name:\t\t\t" + str(self.name))
-    
+
     def mass(self):
         """Returns the mass of the molecule in u.m.a."""
         m = 0
         for atom in self.element:
-            m += constants.atomic_mass[atom]
+            m += utils.atomic_mass[atom]
         return m
-    
+
     def rcm(self):
         """Returns the position of the center of mass of the molecule"""
         r = []
         for col in range(0, 3):
             var = 0
             for row in range(0, self.natoms):
-                var += constants.atomic_mass[self.element[row]]*self.xyz[row][col]
+                var += utils.atomic_mass[self.element[row]]*self.xyz[row][col]
             r.append(var/self.mass())
         return r
 
@@ -210,7 +212,7 @@ class MOL:
             if atom_name == atom:
                 n += 1
         return n
-    
+
     def composition(self, order="mass"):
         """
         Returns the composition of the molecule as a list of lists of type [element, number, %mass].
@@ -219,21 +221,52 @@ class MOL:
         comp = []
         #Create a list of atoms divided by element with the relative number of them in the molecule
         for atom in self.element:
-            known_atoms = [i[0] for i in comp] 
+            known_atoms = [i[0] for i in comp]
             if atom in known_atoms:
                 comp[known_atoms.index(atom)][1] += 1
             else:
                 comp.append([atom, 1, 0])
         #Complete the last column with the percentual in mass of each element
         for atom in comp:
-            atom[2] = 100.*atom[1]*constants.atomic_mass[atom[0]]/self.mass()
+            atom[2] = 100.*atom[1]*utils.atomic_mass[atom[0]]/self.mass()
         #Order the elements by abbundance in mass
         comp.sort(key=lambda x: x[2], reverse=True)
         #If selected order the elements by number
         if order == "number":
-            comp.sort(key=lambda x: x[1], reverse=True) 
+            comp.sort(key=lambda x: x[1], reverse=True)
         return comp
-    
+
+    def inertia_tensor(self, toll=0.5):
+        """Returns the moment of inertia tensor and the rotor type"""
+        # Centering molecule on centroid
+        centroid = np.mean(self.xyz, axis=0)
+        xyz_cen = np.subtract(self.xyz, centroid)
+        mol = [[E, X[0], X[1], X[2]] for E in self.element for X in xyz_cen]
+        # Inertia tensor calculation
+        iner_tensor = [
+            [sum(utils.atomic_mass[i[0]]*(float(i[2])**2+float(i[3])**2) for i in mol), -sum(utils.atomic_mass[i[0]]*float(i[1])*float(i[2]) for i in mol), -sum(utils.atomic_mass[i[0]]*float(i[1])*float(i[3]) for i in mol)],
+            [-sum(utils.atomic_mass[i[0]]*float(i[1])*float(i[2]) for i in mol), sum(utils.atomic_mass[i[0]]*(float(i[1])**2+float(i[3])**2) for i in mol), -sum(utils.atomic_mass[i[0]]*float(i[3])*float(i[2]) for i in mol)],
+            [-sum(utils.atomic_mass[i[0]]*float(i[1])*float(i[3]) for i in mol), -sum(utils.atomic_mass[i[0]]*float(i[3])*float(i[2]) for i in mol), sum(utils.atomic_mass[i[0]]*(float(i[1])**2+float(i[2])**2) for i in mol)]
+        ]
+        # Tensor diagonalization and eigenvalues sorting for convenience (future implementations)
+        iner_eigval = sorted(np.linalg.eigvals(iner_tensor))
+        # Rotor type detection
+        if abs(iner_eigval[0] - iner_eigval[1]) < toll and abs(iner_eigval[1] - iner_eigval[2]) < toll:
+            rotor_type = 'Spherical Top'
+        elif abs(iner_eigval[0] - iner_eigval[1]) < toll and iner_eigval[1] < iner_eigval[2]:
+            rotor_type = 'Oblate Symmetric Top'
+        elif iner_eigval[0] < iner_eigval[1] and abs(iner_eigval[1] - iner_eigval[2]) < toll:
+            rotor_type = 'Prolate Symmetric Top'
+            if abs(0 - iner_eigval[0]) < toll and abs(iner_eigval[1] - iner_eigval[2]) < toll:
+                rotor_type = 'Prolate Symmetric Top - Linear Arrangement'
+        elif iner_eigval[0] < iner_eigval[1] and iner_eigval[1] < iner_eigval[2]:
+            rotor_type = 'Asymmetric Top'
+        else:
+            rotor_type = 'Error: rotor is not defined!!!'
+            sys.exit()
+
+        return iner_tensor, iner_eigval, rotor_type
+
     def load_hess_file(self, path, verbose=False):
         """
         The function loads into the MOL class object the data conteined into the .hess file
@@ -299,8 +332,8 @@ class MOL:
                 if verbose == True: print("WARNING: no infrared spectrum matrix found")
         except FileNotFoundError as detail:
             print("\n{}".format(detail))
-            quit()
-        
+            sys.exit()
+
     def get_normal_mode(self, k, style="xyz", coord_type="cartesian", verbose=True):
         '''
         Returns the kth-normal mode of vibration. The output style can be selected by setting the
@@ -312,7 +345,7 @@ class MOL:
         if hasattr(self, "normal_modes_matrix"):
             if k < 0 or k >= self.natoms*3:
                 if verbose == True: print("ERROR: Index of normal mode out of range")
-                quit()
+                sys.exit()
             column = [col[k] for col in self.normal_modes_matrix]   #Extract a column from the normal modes matrix
             if style == "linear":
                 if coord_type == "cartesian":
@@ -321,12 +354,12 @@ class MOL:
                     mass_weighted_mode = []
                     for index, value in enumerate(column):
                         atom = int((index-index%3)/3)                                       #Compute the index of the atom
-                        mass_factor = np.sqrt(constants.atomic_mass[self.element[atom]])    #Compute the mass correction factor
+                        mass_factor = np.sqrt(utils.atomic_mass[self.element[atom]])    #Compute the mass correction factor
                         mass_weighted_mode.append(mass_factor*value)                        #Compute the value of the component in mass weighted coordiantes
                     return mass_weighted_mode                                               #Return the mass weighted vector as a list
                 else:
                     if verbose == True: print("ERROR: The coordinate type " + str(coord_type) + " is not a supported one")
-                    quit()
+                    sys.exit()
             elif style == "xyz":
                 list_format = self.get_normal_mode(k, style="linear", coord_type=coord_type, verbose=verbose)    #Call the linear module
                 #Reshape the list as a list of lists as [x, y, z]
@@ -339,7 +372,7 @@ class MOL:
                 return xyz_format
             else:
                 if verbose == True: print("ERROR: The style " + str(style) + " is not available")
-            quit()
+            sys.exit()
         else:
             if verbose == True: print("ERROR: no normal modes matrix found")
-            quit()
+            sys.exit()
