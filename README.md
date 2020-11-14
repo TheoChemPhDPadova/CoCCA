@@ -3,6 +3,10 @@
 # CoCCA
 **Co**mputational **C**hemistry **C**alculations **A**ssistant
 
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
+[![GitHub issues](https://img.shields.io/github/issues/TheoChemPhDPadova/CoCCA)](https://img.shields.io/github/issues/TheoChemPhDPadova/CoCCA)
+[![GitHub version](https://img.shields.io/github/v/release/TheoChemPhDPadova/CoCCA)](https://img.shields.io/github/v/release/TheoChemPhDPadova/CoCCA)
+
 ## Table of contents
   - [Setup](#setup)
   - [Modules](#modules)
@@ -21,8 +25,11 @@
 
 ## Setup
 - Clone the repository and keep it safe wherever you want!
-- Add an alias to your *.bashrc* like:
-
+- Download the required repositories with
+```
+pip install -r requirements.txt --user
+```
+- Add an alias to your *.bashrc* like (optional):
 ```
 alias cocca="python3 PATH-TO-COCCA/main.py"
 ```
