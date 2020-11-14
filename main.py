@@ -35,10 +35,10 @@ def data_manipulation():
     """Trajectory Manipulation"""
     utils.header(__VERSION__)
     print("""
-1) Resizer                      (TRJ/GENERAL/ORCA)
-2) Analyzer/Freezer             (TRJ/GENERAL)
-3) Slicer                       (TRJ/GENERAL)
-4) TRJ 2 QST2/QST3              (TRJ/Gaussian)
+1) Resizer                                              (TRJ/GENERAL/ORCA)
+2) Analyzer/Freezer                                     (TRJ/GENERAL)
+3) Slicer                                               (TRJ/GENERAL)
+4) TRJ 2 Synchronous Transit-Guided Quasi-Newton        (TRJ/Gaussian)
 
 b) Back to Main Menu
 q) Exit

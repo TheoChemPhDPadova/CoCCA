@@ -93,7 +93,7 @@ def main(FILENAME='', CHN='', RES=''):
             for ATOM in PRO.prot[SelC][str(AA)]:
                 MOL.append("{} \t{:.3f}\t {:.3f}\t {:.3f}".format(ATOM[8], ATOM[5], ATOM[6], ATOM[7]))
 
-            #ACE
+            # ACE
             if AA == GRP[0] and TGroup == '1':
                 for ATOM in PRO.prot[SelC][str(AA - 1)]:
                     if ATOM[1] == 'O':
@@ -109,7 +109,7 @@ def main(FILENAME='', CHN='', RES=''):
                 for i in H_Met:
                     MOL.append("{} \t{:.3f}\t {:.3f}\t {:.3f}".format(i[0], i[1], i[2], i[3]))
 
-            #NME
+            # NME
             if AA == GRP[-1] and TGroup == '1':
                 for ATOM in PRO.prot[SelC][str(AA + 1)]:
                     if ATOM[1] == 'NH':

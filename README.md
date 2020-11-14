@@ -1,4 +1,4 @@
-<img src="img/CoCCA.png" align="right" />
+<img src="img/CoCCA.png" align="right" width="150" height="166"/>
 
 # CoCCA
 **Co**mputational **C**hemistry **C**alculations **A**ssistant
@@ -10,15 +10,14 @@
       - [Resizer](#resizer)
       - [Analyzer/Freezer](#analyzer/freezer)
       - [Slicer](#slicer)
-      - [TRJ 2 QST2/QST3](#TRJ-2-QST2/QST3)
+      - [TRJ 2 Synchronous Transit-Guided Quasi-Newton](#TRJ-2-QST2/QST3)
     - [PDB Tools](#pdb-tools)
-      - [Neighbor Finder](#neighbor-finder)
-      - [Catalytic Pocket Selector](#neighbor-finder)
+      - [Proximity Analysis](#proximity-analysis)
+      - [Catalytic Pocket Selector](#catalytic-pocket-selector)
+    - [Molecular properties and vibrations](#molecular-properties-and-vibrations)
     - [Others](#others)
       - [Constrain Generator](#constrain-generator)
   - [Quick Mode](#quick-mode)
-      - [General Output from QM-Suite](#General-Output-from-QM-Suite-(ADF,-ORCA,-Gaussian))
-      - [NEB Visualizer](#NEB-Visualizer)
 
 ## Setup
 - Clone the repository and keep it safe wherever you want!
@@ -48,12 +47,11 @@ Useful tool to select two structures (from a trajectory) just before and after t
 Useful for .pdb analysis or large molecules inspection. Search what is nearby a selected amino acid, residue or atom in a spherical region. The distance threshold for the search is in ångström. The charge of the amino acids is calculated at physiologic pH.
 
 #### **Catalytic Pocket Selector**
-TBD
+Used to select a portion of a protein (from a .pdb file) for further analysis. The selection is made by choosing the residues. This utility is particularly useful when you want to extract the catalytic pocket or parts of particular interest from a protein that will be analyzed later with high accuracy quantum mechanic methods (e.g. DFT). The two endings of all the selected chains of residues can be capped with ACE/NME residues or with a atom marker.
 
 ### Molecular properties and vibrations
 ---
-#### **Linear transit**
-
+This module contains several utilities to calculate molecular properties (% composition, center of mass, moment of inertia tensor), plot IR spectra (with gaussian/lorentzian broadening) and generate linear interpolated structures between two given limit geometries.
 
 ### Others
 ---
@@ -62,7 +60,14 @@ It is used to quickly generate input for Quantum Computational software suite (O
 When asked to select the atom indices, insert one or more atom number separed by a space. Also ranges are allowed (e.g.: 110-125, from atom 110 to 125). The enumeration starts from 1.
 
 ## Quick Mode
+The quick mode simply works by calling the main script (main.py) with the name of the file that should be loaded as the argument.
+```
+python3 main.py <filename.out/.interp/.xyz>
+```
 
-### General Output from QM-Suite (ADF, ORCA, Gaussian)
-
-### NEB Visualizer (ORCA)
+### Supported files:
+| EXTENSION | Description |
+| ----------- | ----------- |
+| .OUT | AMS/ADF, ORCA, Gaussian output files |
+| .INTERP | ORCA interpolation file from a NEB analysis |
+| .XYZ | Cartesian XYZ: requires an additional **load** directive ```python3 main.py load <filename.xyz> <filename2.xyz> ...``` used to load multiple XYZ structures |
