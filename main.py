@@ -107,7 +107,6 @@ def molecule_interface():
         print("Selected ID: " + str(ID) + "\tMolecule name: " + str(MOL_LIST[ID-1].name) + "\n")
         return ID
 
-
     def list_molecules():
         print("\n            LIST OF LOADED MOLECULES")
         print("------------------------------------------------\n")
@@ -254,13 +253,13 @@ if len(sys.argv) == 1:
 else:
     utils.header(__VERSION__)
     if sys.argv[1].split(".")[-1] == "interp":
-        print("\nQUICK MODE: Detected .interp file. Opening as fast as I can...")
+        print("\nQUICK MODE:\tDetected .interp file. Opening as fast as I can...")
         neb_vis.main(sys.argv[1])
     elif sys.argv[1].split(".")[-1] == "out":
-        print("\nQUICK MODE: Detected .out file. Opening as fast as I can...")
+        print("\nQUICK MODE:\tDetected .out file. Opening as fast as I can...")
         out_sum.main(sys.argv[1])
     elif sys.argv[1] == "load":
-        print("\nQUICK MODE: Detected load instruction.\nLoading .xyz files...")
+        print("\nQUICK MODE:\tDetected load instruction.\nLoading .xyz files...")
         print("------------------------------------------------")
         for i, argument in enumerate(sys.argv):
             if i > 1 and argument.split(".")[-1] == "xyz":

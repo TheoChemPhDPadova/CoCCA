@@ -103,8 +103,7 @@ class G16:
 
         for idx, val in enumerate(lines):
             if ' Gaussian 16,' in val and self.version == '':
-                self.version = lines[idx].split()[3].replace(',','')
-                print(self.version)
+                self.version = lines[idx].split()[3].replace(',', '')
             elif ' SCF Done:' in val:
                 self.ene.append(float(val.split()[4]))
             elif '         Item               Value     Threshold  Converged' in val:

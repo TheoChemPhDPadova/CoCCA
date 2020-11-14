@@ -1,7 +1,9 @@
 """QM output reader"""
 import sys
 import argparse, QM_parser
-import matplotlib.pyplot as plt
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+import numpy as np
 
 
 def main(path):
@@ -10,95 +12,163 @@ def main(path):
 
     if 'Amsterdam Density Functional  (ADF)' in out or 'Amsterdam Modeling Suite (AMS)' in out:
         src = QM_parser.AMS(path)
+        print('Software:\tADF/AMS {}'.format(src.version))
     elif 'O   R   C   A' in out:
         src = QM_parser.ORCA(path)
+        print('Software:\tORCA {}'.format(src.version))
     elif ' Gaussian 16,' in out:
         src = QM_parser.G16(path)
+        print('Software:\tGaussian 16 {}'.format(src.version))
     else:
         print('\nSorry, output file not supported!')
         sys.exit()
 
-    plt.rc('font', family='serif')
-    fig = plt.figure()
-    fig.canvas.set_window_title(src.version)
+    x = np.arange(len(src.ene) - 1)
+    fig = make_subplots(
+        rows=3,
+        cols=3,
+        horizontal_spacing=0.05,
+        vertical_spacing=0.10,
+        subplot_titles=(
+            "Energy / Ha", "Gradient MAX / Ha", "Displacement MAX / Å",
+            "|Energy Change| / Ha", "Gradient RMS / Ha", "Displacement RMS / Å",
+            "Eigenvectors"
+        ))
 
-    ax1 = plt.subplot(331)
-    plt.plot(src.ene, marker=".", markersize=7, lw=1)
-    plt.ylabel('Hartree')
-    plt.title('Energy')
-    plt.xlim(0, len(src.ene)-1)
+    fig.add_trace(go.Scatter(x=x, y=src.ene, line=dict(color='black', width=1), marker=dict(color='black')), row=1, col=1)
 
-    plt.subplot(332)
-    plt.plot(src.grdmax, marker=".", markersize=7, lw=1)
-    plt.axhline(y=src.grdmaxlim, color='r', linestyle='-', lw=1.5)
+    fig.add_trace(go.Scatter(x=x, y=src.grdmax, line=dict(color='darkorange', width=1), marker=dict(color='darkorange')), row=1, col=2)
     if src.grdmax[-1] < src.grdmaxlim:
-        plt.axhline(y=src.grdmaxlim, color='#3bd636', linestyle='-', lw=1.5)
+        fig.add_shape(go.layout.Shape(
+            type="line",
+            x0=x[0],
+            y0=src.grdmaxlim,
+            x1=x[-1],
+            y1=src.grdmaxlim,
+            line=dict(color='green', width=1),),
+            row=1,
+            col=2
+        )
     else:
-        plt.axhline(y=src.grdmaxlim, color='r', linestyle='-', lw=1.5)
-    plt.ylabel('Hartree')
-    plt.title('Gradient MAX')
-    plt.xlim(0, len(src.ene)-1)
+        fig.add_shape(go.layout.Shape(
+            type="line",
+            x0=x[0],
+            y0=src.grdmaxlim,
+            x1=x[-1],
+            y1=src.grdmaxlim,
+            line=dict(color='red', width=1),),
+            row=1,
+            col=2
+        )
 
-    plt.subplot(333)
-    plt.plot(src.stpmax, marker=".", markersize=7, lw=1)
-    plt.axhline(y=src.stpmaxlim, color='r', linestyle='-', lw=1.5)
+    fig.add_trace(go.Scatter(x=x, y=src.stpmax, line=dict(color='royalblue', width=1), marker=dict(color='royalblue')), row=1, col=3)
     if src.stpmax[-1] < src.stpmaxlim:
-        plt.axhline(y=src.stpmaxlim, color='#3bd636', linestyle='-', lw=1.5)
+        fig.add_shape(go.layout.Shape(
+            type="line",
+            x0=x[0],
+            y0=src.stpmaxlim,
+            x1=x[-1],
+            y1=src.stpmaxlim,
+            line=dict(color='green', width=1),),
+            row=1,
+            col=3
+        )
     else:
-        plt.axhline(y=src.stpmaxlim, color='r', linestyle='-', lw=1.5)
-    plt.ylabel('Hartree')
-    plt.title('Displacement MAX')
-    plt.xlim(0, len(src.ene)-1)
+        fig.add_shape(go.layout.Shape(
+            type="line",
+            x0=x[0],
+            y0=src.stpmaxlim,
+            x1=x[-1],
+            y1=src.stpmaxlim,
+            line=dict(color='red', width=1),),
+            row=1,
+            col=3
+        )
 
-    plt.subplot(334)
-    plt.plot(src.enechg, marker=".", markersize=7, lw=1)
+    fig.add_trace(go.Scatter(x=x, y=[abs(i) for i in src.enechg[1:]], line=dict(color='black', width=1), marker=dict(color='black')), row=2, col=1)
     if src.enelim != '':
-        plt.axhline(y=src.enelim, color='r', linestyle='-', lw=1.5)
         if src.enechg[-1] < src.enelim:
-            plt.axhline(y=src.enelim, color='#3bd636', linestyle='-', lw=1.5)
+            fig.add_shape(go.layout.Shape(
+                type="line",
+                x0=x[0],
+                y0=src.enelim,
+                x1=x[-1],
+                y1=src.enelim,
+                line=dict(color='green', width=1),),
+                row=2,
+                col=1
+            )
         else:
-            plt.axhline(y=src.enelim, color='r', linestyle='-', lw=1.5)
-    plt.ylabel('Hartree')
-    plt.title('|Energy Change|')
-    plt.xlim(0, len(src.ene)-1)
+            fig.add_shape(go.layout.Shape(
+                type="line",
+                x0=x[0],
+                y0=src.enelim,
+                x1=x[-1],
+                y1=src.enelim,
+                line=dict(color='red', width=1),),
+                row=2,
+                col=1
+            )
 
-    plt.subplot(335)
-    plt.plot(src.grdrms, marker=".", markersize=7, lw=1)
-    plt.axhline(y=src.grdrmslim, color='r', linestyle='-', lw=1.5)
+    fig.add_trace(go.Scatter(x=x, y=src.grdrms, line=dict(color='darkorange', width=1), marker=dict(color='darkorange')), row=2, col=2)
     if src.grdrms[-1] < src.grdrmslim:
-        plt.axhline(y=src.grdrmslim, color='#3bd636', linestyle='-', lw=1.5)
+        fig.add_shape(go.layout.Shape(
+            type="line",
+            x0=x[0],
+            y0=src.grdrmslim,
+            x1=x[-1],
+            y1=src.grdrmslim,
+            line=dict(color='green', width=1),),
+            row=2,
+            col=2
+        )
     else:
-        plt.axhline(y=src.grdrmslim, color='r', linestyle='-', lw=1.5)
-    plt.ylabel('Hartree')
-    plt.title('Gradient RMS')
-    plt.xlim(0, len(src.ene)-1)
+        fig.add_shape(go.layout.Shape(
+            type="line",
+            x0=x[0],
+            y0=src.grdrmslim,
+            x1=x[-1],
+            y1=src.grdrmslim,
+            line=dict(color='red', width=1),),
+            row=2,
+            col=2
+        )
 
-    plt.subplot(336)
-    plt.plot(src.stprms, marker=".", markersize=7, lw=1)
-    plt.axhline(y=src.stprmslim, color='r', linestyle='-', lw=1.5)
+    fig.add_trace(go.Scatter(x=x, y=src.stprms, line=dict(color='royalblue', width=1), marker=dict(color='royalblue')), row=2, col=3)
     if src.stprms[-1] < src.stprmslim:
-        plt.axhline(y=src.stprmslim, color='#3bd636', linestyle='-', lw=1.5)
+        fig.add_shape(go.layout.Shape(
+            type="line",
+            x0=x[0],
+            y0=src.stprmslim,
+            x1=x[-1],
+            y1=src.stprmslim,
+            line=dict(color='green', width=1),),
+            row=2,
+            col=3
+        )
     else:
-        plt.axhline(y=src.stprmslim, color='r', linestyle='-', lw=1.5)
-    plt.ylabel('Hartree')
-    plt.title('Displacement RMS')
-    plt.xlim(0, len(src.ene)-1)
+        fig.add_shape(go.layout.Shape(
+            type="line",
+            x0=x[0],
+            y0=src.stprmslim,
+            x1=x[-1],
+            y1=src.stprmslim,
+            line=dict(color='red', width=1),),
+            row=2,
+            col=3
+        )
 
     if src.eigen != []:
-        plt.subplot(337)
-        plt.plot(src.eigen[0], marker=".", markersize=7, lw=1)
-        plt.plot(src.eigen[1], marker=".", markersize=7, lw=1)
-        plt.plot(src.eigen[2], marker=".", markersize=7, lw=1)
-        plt.plot(src.eigen[3], marker=".", markersize=7, lw=1)
-        plt.plot(src.eigen[4], marker=".", markersize=7, lw=1)
+        for eig in src.eigen:
+            fig.add_trace(go.Scatter(x=x, y=eig, line=dict(width=0.7)), row=3, col=1)
 
-    plt.axhline(y=0, color='black', linestyle='--', lw=1)
-    plt.title('Hessian Eigenvector')
-    plt.xlim(0, len(src.ene)-1)
-
-    mng = plt.get_current_fig_manager()
-    mng.full_screen_toggle()
-    plt.show()
+    fig.update_xaxes(range=[0, len(x) - 1], dtick=1)
+    fig.update_layout(
+        template="plotly_white",
+        showlegend=False
+    )
+    fig.show()
+    sys.exit()
 
 
 if __name__ == "__main__":
