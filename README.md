@@ -5,7 +5,7 @@
 
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 [![GitHub issues](https://img.shields.io/github/issues/TheoChemPhDPadova/CoCCA)](https://img.shields.io/github/issues/TheoChemPhDPadova/CoCCA)
-[![GitHub version](https://img.shields.io/github/v/release/TheoChemPhDPadova/CoCCA)](https://img.shields.io/github/v/release/TheoChemPhDPadova/CoCCA)
+[![GitHub version](https://img.shields.io/github/v/tag/TheoChemPhDPadova/CoCCA)](https://img.shields.io/github/v/tag/TheoChemPhDPadova/CoCCA)
 
 ## Table of contents
   - [Setup](#setup)
