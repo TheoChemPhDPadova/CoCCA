@@ -30,29 +30,29 @@ def main(path):
     for i in idx_pts:
         if i == idx_pts[0]:
             x = [float(lines[j].split()[0]) for j in range(i, i + pts_n)]
-            y = [float(lines[j].split()[1]) * utils.ha2kcal for j in range(i, i + pts_n)]
+            y = [float(lines[j].split()[2]) * utils.ha2kcal for j in range(i, i + pts_n)]
             fig.add_trace(go.Scatter(x=x, y=y, mode='markers', name='markers', marker=dict(color='darkorange')))
         elif i == idx_pts[-1]:
             x = [float(lines[j].split()[0]) for j in range(i, i + pts_n)]
-            y = [float(lines[j].split()[1]) * utils.ha2kcal for j in range(i, i + pts_n)]
+            y = [float(lines[j].split()[2]) * utils.ha2kcal for j in range(i, i + pts_n)]
             fig.add_trace(go.Scatter(x=x, y=y, mode='markers', name='markers', marker=dict(color='cornflowerblue')))
         else:
             x = [float(lines[j].split()[0]) for j in range(i, i + pts_n)]
-            y = [float(lines[j].split()[1]) * utils.ha2kcal for j in range(i, i + pts_n)]
+            y = [float(lines[j].split()[2]) * utils.ha2kcal for j in range(i, i + pts_n)]
             fig.add_trace(go.Scatter(x=x, y=y, mode='markers', name='markers', marker=dict(color='gainsboro')))
 
     for i in idx_int:
         if i == idx_int[0]:
             x = [float(lines[j].split()[0]) for j in range(i, i + int_n)]
-            y = [float(lines[j].split()[1]) * utils.ha2kcal for j in range(i, i + int_n)]
+            y = [float(lines[j].split()[2]) * utils.ha2kcal for j in range(i, i + int_n)]
             fig.add_trace(go.Scatter(x=x, y=y, mode='lines', name='lines', line=dict(color='darkorange')))
         elif i == idx_int[-1]:
             x = [float(lines[j].split()[0]) for j in range(i, i + int_n)]
-            y = [float(lines[j].split()[1]) * utils.ha2kcal for j in range(i, i + int_n)]
+            y = [float(lines[j].split()[2]) * utils.ha2kcal for j in range(i, i + int_n)]
             fig.add_trace(go.Scatter(x=x, y=y, mode='lines', name='lines', line=dict(color='cornflowerblue')))
         else:
             x = [float(lines[j].split()[0]) for j in range(i, i + int_n)]
-            y = [float(lines[j].split()[1]) * utils.ha2kcal for j in range(i, i + int_n)]
+            y = [float(lines[j].split()[2]) * utils.ha2kcal for j in range(i, i + int_n)]
             fig.add_trace(go.Scatter(x=x, y=y, mode='lines', name='lines', line=dict(color='gainsboro')))
 
     fig.update_layout(

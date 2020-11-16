@@ -20,16 +20,17 @@ def main():
     utils.TITLE("Trajectory Pruning")
 
     TRJ = utils.TRJ(input("Enter trajectory file path...\t"))
-    K_LIST = multiple_parser(input("\nSnapshot numbers to extract?\t").split())
+    K_LIST = input("\nSnapshot groups to extract? (e.g. 1-5 6-10)\t").split()
+    K_LISTD = [multiple_parser([i]) for i in K_LIST]
 
-    with open("./newTRAJ.xyz", 'a') as out:
-        for idx_i, val_i in enumerate(TRJ.trajectory):
-            if idx_i + 1 in K_LIST:
-                out.write("{}\n".format(str(TRJ.natoms)))
-                out.write("Trajectory {}\n".format(idx_i + 1))
-                for j in val_i:
-                    out.write("{} \t{:.10f}\t {:.10f}\t {:.10f} \n".format(j[0], j[1], j[2], j[3]))
-
+    for trj_n, sna_list in enumerate(K_LISTD):
+        with open("./TRJ_{}.xyz".format(str(trj_n)), 'a') as out:
+            for idx_i, val_i in enumerate(TRJ.trajectory):
+                if idx_i + 1 in sna_list:
+                    out.write("{}\n".format(str(TRJ.natoms)))
+                    out.write("Trajectory {}\n".format(idx_i + 1))
+                    for j in val_i:
+                        out.write("{} \t{:.10f}\t {:.10f}\t {:.10f} \n".format(j[0], j[1], j[2], j[3]))
     utils.NT()
 
 
